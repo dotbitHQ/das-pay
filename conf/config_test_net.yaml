@@ -1,0 +1,78 @@
+server:
+  net: 2
+  cron_spec: ""
+  hedge_url: ""
+  remote_sign_api_url: ""
+notify:
+  lark_error_key: ""
+  lark_das_info_key: ""
+db:
+  mysql:
+    addr: ""
+    user: ""
+    password: ""
+    db_name: ""
+    max_open_conn: 100
+    max_idle_conn: 100
+chain:
+  ckb:
+    switch: false
+    refund: false
+    ckb_url: "http://127.0.0.1:8114"
+    index_url: "http://127.0.0.1:8116"
+    address: ""
+    private: ""
+    parser_type: 0
+    current_block_number: 0
+    confirm_num: 4
+    concurrency_num: 5
+  eth:
+    switch: false
+    refund: false
+    refund_add_fee: 1.2
+    node: "http://127.0.0.1:8585"
+    address: ""
+    private: ""
+    parser_type: 1
+    current_block_number: 0
+    confirm_num: 2
+    concurrency_num: 5
+  tron:
+    switch: false
+    refund: false
+    node: "127.0.0.1:50051"
+    address: ""
+    private: ""
+    parser_type: 3
+    current_block_number: 0
+    confirm_num: 10
+    concurrency_num: 10
+  bsc:
+    switch: false
+    refund: false
+    node: "http://127.0.0.1:8545"
+    address: ""
+    private: ""
+    parser_type: 5
+    current_block_number: 0
+    confirm_num: 10
+    concurrency_num: 10
+  polygon:
+    switch: false
+    refund: false
+    node: ""
+    address: ""
+    private: ""
+    parser_type: 6
+    current_block_number: 0
+    confirm_num: 10
+    concurrency_num: 10
+das_lib:
+  thq_code_hash: "0x96248cdefb09eed910018a847cfb51ad044c2d7db650112931760e3ef34a7e9a"
+  das_contract_args: "0xbc502a34a430e3e167c82a24db6f9237b15ebf35"
+  das_contract_code_hash: "0x00000000000000000000000000000000000000000000000000545950455f4944"
+  map_das_contract:
+    "config-cell-type": "0x34363fad2018db0b3b6919c26870f302da74c3c4ef4456e5665b82c4118eda51"
+    "account-cell-type": "0x6f0b8328b703617508d62d1f017b0d91fab2056de320a7b7faed4c777a356b7b"
+    "balance-cell-type": "0x27560fe2daa6150b771621300d1d4ea127832b7b326f2d70eed63f5333b4a8a9"
+    "das-lock": "0xeedd10c7d8fee85c119daf2077fea9cf76b9a92ddca546f1f8e0031682e65aee"

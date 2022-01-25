@@ -25,12 +25,12 @@ Build & run with [das-register](https://github.com/DeAccountSystems/das-register
 # get the code
 git clone https://github.com/DeAccountSystems/das-pay.git
 
-# edit config/config.yaml and run das-database and init das-register's db before run das_pay_server
+# edit config/config.yaml and run das-database and init db of das-register before run das_pay_server
 
 # compile and run
 cd das-pay
 make pay
-./das_pay_server --config=config/config.yaml
+./das_pay_server --config=conf/config.yaml
 ```
 
 ## Usage

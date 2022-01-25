@@ -37,6 +37,7 @@ make pay
 Set the gateway address of each chain in `conf/config.yaml` ( `private`, the private key of address, is for refund). The whole workflow as below:
 
 
+```
                 ┌───────┐
                 │ start │
                 └───┬───┘
@@ -75,7 +76,7 @@ N                   │              │   │
 └──────────────►│  end  │
                 └───────┘
 
-
+```
 ## Documents
 * [What is DAS](https://github.com/DeAccountSystems/das-contracts/blob/master/docs/en/Overview-of-DAS.md)
-* [What is a DAS transaction on CKB](https://github.com/DeAccountSystems/das-contracts/blob/master/   docs/en/Data-Structure-and-Protocol/Transaction-Structure.md)
+* [What is a DAS transaction on CKB](https://github.com/DeAccountSystems/das-contracts/blob/master/docs/en/Data-Structure-and-Protocol/Transaction-Structure.md)

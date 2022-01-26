@@ -53,7 +53,7 @@ type RespDeposit struct {
 }
 
 func (d *DasTimer) doHedge(req ReqHedge) error {
-	if req.PayTokenId == tables.TokenIdCkb || req.PayTokenId == tables.TokenIdDas {
+	if req.PayTokenId == tables.TokenIdCkb || req.PayTokenId == tables.TokenIdDas || req.PayTokenId == tables.TokenIdCkbInternal {
 		return nil
 	}
 	var res RespDeposit

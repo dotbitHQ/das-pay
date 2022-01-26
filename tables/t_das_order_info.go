@@ -74,18 +74,19 @@ const (
 type PayTokenId string
 
 const (
-	TokenIdDas   PayTokenId = "ckb_das"
-	TokenIdCkb   PayTokenId = "ckb_ckb"
-	TokenIdEth   PayTokenId = "eth_eth"
-	TokenIdTrx   PayTokenId = "tron_trx"
-	TokenIdWx    PayTokenId = "wx_cny"
-	TokenIdBnb   PayTokenId = "bsc_bnb"
-	TokenIdMatic PayTokenId = "polygon_matic"
+	TokenIdDas         PayTokenId = "ckb_das"
+	TokenIdCkb         PayTokenId = "ckb_ckb"
+	TokenIdCkbInternal PayTokenId = "ckb_internal"
+	TokenIdEth         PayTokenId = "eth_eth"
+	TokenIdTrx         PayTokenId = "tron_trx"
+	TokenIdWx          PayTokenId = "wx_cny"
+	TokenIdBnb         PayTokenId = "bsc_bnb"
+	TokenIdMatic       PayTokenId = "polygon_matic"
 )
 
 func (p PayTokenId) ToChainString() string {
 	switch p {
-	case TokenIdDas, TokenIdCkb:
+	case TokenIdDas, TokenIdCkb, TokenIdCkbInternal:
 		return "ckb"
 	case TokenIdEth:
 		return "eth"
@@ -101,7 +102,7 @@ func (p PayTokenId) ToChainString() string {
 
 func (p PayTokenId) ToChainType() common.ChainType {
 	switch p {
-	case TokenIdDas, TokenIdCkb:
+	case TokenIdDas, TokenIdCkb, TokenIdCkbInternal:
 		return common.ChainTypeCkb
 	case TokenIdEth, TokenIdBnb, TokenIdMatic:
 		return common.ChainTypeEth

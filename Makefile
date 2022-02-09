@@ -9,6 +9,11 @@ pay:
 	mv $(BIN_BINARY_NAME) bin/
 	@echo "Build $(BIN_BINARY_NAME) successfully. You can run bin/$(BIN_BINARY_NAME) now.If you can't see it soon,wait some seconds"
 
+refund: BIN_BINARY_NAME=das_refund_server
+refund:
+	GO111MODULE=on $(GOBUILD) -o $(BIN_BINARY_NAME) cmd/refund/main.go
+	mv $(BIN_BINARY_NAME) bin/
+	@echo "Build $(BIN_BINARY_NAME) successfully. You can run bin/$(BIN_BINARY_NAME) now.If you can't see it soon,wait some seconds"
 
 update:
 	go env -w GOPRIVATE="github.com/DeAccountSystems"

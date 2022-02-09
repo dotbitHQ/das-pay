@@ -54,6 +54,9 @@ func (d *DasTimer) doOrderRefund() error {
 	}
 	var ckbOrderList []*dao.RefundOrderInfo
 	for i, v := range list {
+		if v.RefundStatus != tables.TxStatusSending {
+			continue
+		}
 		switch v.PayTokenId {
 		case tables.TokenIdCkb, tables.TokenIdDas:
 			ckbOrderList = append(ckbOrderList, &list[i])

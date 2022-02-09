@@ -8,19 +8,20 @@ import (
 )
 
 type RefundOrderInfo struct {
-	OrderId    string            `json:"order_id" gorm:"column:order_id"`
-	Hash       string            `json:"hash" gorm:"column:hash"`
-	ChainType  common.ChainType  `json:"chain_type" gorm:"column:chain_type"`
-	Address    string            `json:"address" gorm:"column:address"`
-	PayTokenId tables.PayTokenId `json:"pay_token_id" gorm:"column:pay_token_id"`
-	PayAmount  decimal.Decimal   `json:"pay_amount" gorm:"column:pay_amount"`
+	OrderId      string            `json:"order_id" gorm:"column:order_id"`
+	Hash         string            `json:"hash" gorm:"column:hash"`
+	ChainType    common.ChainType  `json:"chain_type" gorm:"column:chain_type"`
+	Address      string            `json:"address" gorm:"column:address"`
+	PayTokenId   tables.PayTokenId `json:"pay_token_id" gorm:"column:pay_token_id"`
+	PayAmount    decimal.Decimal   `json:"pay_amount" gorm:"column:pay_amount"`
+	RefundStatus tables.TxStatus   `json:"refund_status" gorm:"column:refund_status"`
 }
 
 func (d *DbDao) GetNeedRefundOrderList() (list []RefundOrderInfo, err error) {
-	sql := `SELECT p.order_id,p.hash,p.chain_type,p.address,o.pay_token_id,o.pay_amount 
-FROM t_das_order_pay_info p LEFT JOIN t_das_order_info o 
-ON p.order_id=o.order_id AND o.order_type=? AND p.refund_status=? `
-	err = d.db.Raw(sql, tables.OrderTypeSelf, tables.TxStatusSending).Find(&list).Error
+	sql := `SELECT p.order_id,p.hash,p.chain_type,p.address,o.pay_token_id,o.pay_amount,p.refund_status 
+FROM t_das_order_pay_info p JOIN t_das_order_info o 
+ON p.refund_status=? AND o.order_type=? AND p.order_id=o.order_id `
+	err = d.db.Raw(sql, tables.TxStatusSending, tables.OrderTypeSelf).Find(&list).Error
 	return
 }
 

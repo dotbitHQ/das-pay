@@ -76,8 +76,8 @@ func TestTransactionCkb(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	amount := uint64(51021894267) //* common.OneCkb
-	orderid := "70bd9dea50dfadde8e53237dab59d07c"
+	amount := uint64(33548859339) //* common.OneCkb
+	orderid := "2047945383965376ad7cf6bcfa8e29e3"
 	fromAddr := "ckt1qyqvsej8jggu4hmr45g4h8d9pfkpd0fayfksz44t9q"
 	toAddr := "ckt1qyqvsej8jggu4hmr45g4h8d9pfkpd0fayfksz44t9q"
 	fromParseAddress, err := address.Parse(fromAddr)

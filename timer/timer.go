@@ -8,6 +8,7 @@ import (
 	"das-pay/chain/chain_tron"
 	"das-pay/config"
 	"das-pay/dao"
+	"das-pay/parser"
 	"fmt"
 	"github.com/DeAccountSystems/das-lib/core"
 	"github.com/DeAccountSystems/das-lib/txbuilder"
@@ -35,6 +36,24 @@ type DasTimer struct {
 var (
 	log = mylog.NewLogger("timer", mylog.LevelDebug)
 )
+
+func (d *DasTimer) InitChain(kp *parser.KitParser) {
+	if kp.ParserCkb != nil {
+		d.ChainCkb = kp.ParserCkb.ChainCkb
+	}
+	if kp.ParserTron != nil {
+		d.ChainTron = kp.ParserTron.ChainTron
+	}
+	if kp.ParserEth != nil {
+		d.ChainEth = kp.ParserEth.ChainEvm
+	}
+	if kp.ParserPolygon != nil {
+		d.ChainPolygon = kp.ParserPolygon.ChainEvm
+	}
+	if kp.ParserBsc != nil {
+		d.ChainBsc = kp.ParserBsc.ChainEvm
+	}
+}
 
 func (d *DasTimer) Run() error {
 	if err := d.doUpdateTokenMap(); err != nil {

@@ -85,11 +85,11 @@ func runServer(ctx *cli.Context) error {
 
 	// timer
 	dt := timer.DasTimer{
-		ChainEth:      kp.ParserEth.ChainEvm,
-		ChainBsc:      kp.ParserBsc.ChainEvm,
-		ChainPolygon:  kp.ParserPolygon.ChainEvm,
-		ChainTron:     kp.ParserTron.ChainTron,
-		ChainCkb:      kp.ParserCkb.ChainCkb,
+		ChainEth:      nil,
+		ChainBsc:      nil,
+		ChainPolygon:  nil,
+		ChainTron:     nil,
+		ChainCkb:      nil,
 		SignClient:    nil,
 		TxBuilderBase: txBuilderBase,
 		DasCore:       dasCore,
@@ -97,6 +97,7 @@ func runServer(ctx *cli.Context) error {
 		Ctx:           ctxServer,
 		Wg:            &wgServer,
 	}
+	dt.InitChain(kp)
 	if config.Cfg.Server.RemoteSignApiUrl != "" {
 		signClient, err := chain_sign.NewRemoteSignClient(ctxServer, config.Cfg.Server.RemoteSignApiUrl)
 		if err != nil {

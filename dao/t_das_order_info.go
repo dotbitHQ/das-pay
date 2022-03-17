@@ -2,7 +2,6 @@ package dao
 
 import (
 	"das-pay/tables"
-	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -13,14 +12,6 @@ func (d *DbDao) GetOrderByOrderId(orderId string) (order tables.TableDasOrderInf
 }
 
 func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
-	var oldPayInfo tables.TableDasOrderPayInfo
-	if err := d.db.Where("`hash`!=? AND order_id=? AND status=? AND refund_status=?",
-		payInfo.Hash, payInfo.OrderId, tables.OrderTxStatusConfirm, tables.TxStatusDefault).Find(&oldPayInfo).Error; err != nil {
-		return fmt.Errorf("get old pay info err: %s", err.Error())
-	} else if oldPayInfo.Id > 0 {
-		payInfo.RefundStatus = tables.TxStatusSending
-	}
-
 	return d.db.Transaction(func(tx *gorm.DB) error {
 		if err := d.db.Model(tables.TableDasOrderInfo{}).
 			Where("order_id=? AND order_type=? AND pay_status=?",
@@ -28,6 +19,15 @@ func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
 			Updates(map[string]interface{}{
 				"pay_status":      tables.TxStatusSending,
 				"register_status": tables.RegisterStatusApplyRegister,
+			}).Error; err != nil {
+			return err
+		}
+
+		if err := d.db.Model(tables.TableDasOrderPayInfo{}).
+			Where("order_id=? AND `hash`!=? AND status=? AND refund_status=?",
+				payInfo.OrderId, payInfo.Hash, tables.OrderTxStatusConfirm, tables.TxStatusDefault).
+			Updates(map[string]interface{}{
+				"refund_status": tables.TxStatusSending,
 			}).Error; err != nil {
 			return err
 		}

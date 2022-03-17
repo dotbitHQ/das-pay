@@ -14,7 +14,7 @@ func (d *DbDao) GetOrderByOrderId(orderId string) (order tables.TableDasOrderInf
 
 func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
 	var oldPayInfo tables.TableDasOrderPayInfo
-	if err := d.db.Where("`hash`!=? AND order_id=? AND status=? AND refund_status=",
+	if err := d.db.Where("`hash`!=? AND order_id=? AND status=? AND refund_status=?",
 		payInfo.Hash, payInfo.OrderId, tables.OrderTxStatusConfirm, tables.TxStatusDefault).Find(&oldPayInfo).Error; err != nil {
 		return fmt.Errorf("get old pay info err: %s", err.Error())
 	} else if oldPayInfo.Id > 0 {

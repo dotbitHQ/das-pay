@@ -2,6 +2,7 @@ package dao
 
 import (
 	"das-pay/tables"
+	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -12,6 +13,14 @@ func (d *DbDao) GetOrderByOrderId(orderId string) (order tables.TableDasOrderInf
 }
 
 func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
+	var oldPayInfo tables.TableDasOrderPayInfo
+	if err := d.db.Where("`hash`!=? AND order_id=? AND status=? AND refund_status=",
+		payInfo.Hash, payInfo.OrderId, tables.OrderTxStatusConfirm, tables.TxStatusDefault).Find(&oldPayInfo).Error; err != nil {
+		return fmt.Errorf("get old pay info err: %s", err.Error())
+	} else if oldPayInfo.Id > 0 {
+		payInfo.RefundStatus = tables.TxStatusSending
+	}
+
 	return d.db.Transaction(func(tx *gorm.DB) error {
 		if err := d.db.Model(tables.TableDasOrderInfo{}).
 			Where("order_id=? AND order_type=? AND pay_status=?",

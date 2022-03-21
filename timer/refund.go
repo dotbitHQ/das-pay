@@ -195,10 +195,10 @@ func (d *DasTimer) doOrderRefundEvm(req *doOrderRefundEvmReq) (string, error) {
 		return "", fmt.Errorf("UpdateRefundStatus err: %s", err.Error())
 	}
 	if err := req.chainEvm.SendTransaction(tx); err != nil {
-		//if err := d.DbDao.UpdateRefundStatus(orderIds, tables.TxStatusOk, tables.TxStatusSending); err != nil {
-		//	log.Info("UpdateRefundStatus err: ", err.Error(), req.order.OrderId)
-		//	notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund", notify.GetLarkTextNotifyStr("UpdateRefundStatus", req.order.OrderId, err.Error()))
-		//}
+		if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusOk, tables.TxStatusSending); err != nil {
+			log.Info("UpdateRefundStatus err: ", err.Error(), req.order.OrderId)
+			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund", notify.GetLarkTextNotifyStr("UpdateRefundStatus", req.order.OrderId, err.Error()))
+		}
 		return "", fmt.Errorf("SendTransaction err: %s", err.Error())
 	}
 	refundHash := tx.Hash().Hex()
@@ -246,10 +246,10 @@ func (d *DasTimer) doOrderRefundTrx(order *dao.RefundOrderInfo) (string, error) 
 		return "", fmt.Errorf("UpdateRefundStatus err: %s", err.Error())
 	}
 	if err := d.ChainTron.SendTransaction(tx.Transaction); err != nil {
-		//if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusOk, tables.TxStatusSending); err != nil {
-		//	log.Info("UpdateRefundStatus err: ", err.Error(), order.OrderId)
-		//	notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund", notify.GetLarkTextNotifyStr("UpdateRefundStatus", order.OrderId, err.Error()))
-		//}
+		if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusOk, tables.TxStatusSending); err != nil {
+			log.Info("UpdateRefundStatus err: ", err.Error(), order.OrderId)
+			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund", notify.GetLarkTextNotifyStr("UpdateRefundStatus", order.OrderId, err.Error()))
+		}
 		return "", fmt.Errorf("SendTransaction err: %s", err.Error())
 	}
 	// order tx
@@ -340,10 +340,10 @@ func (d *DasTimer) doOrderRefundCkb(list []*dao.RefundOrderInfo) (string, error)
 		return "", fmt.Errorf("UpdateRefundStatus err: %s", err.Error())
 	}
 	if hash, err := txBuilder.SendTransactionWithCheck(false); err != nil {
-		//if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusOk, tables.TxStatusSending); err != nil {
-		//	log.Info("UpdateRefundStatus err: ", err.Error(), hashList)
-		//	notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund ckb", notify.GetLarkTextNotifyStr("UpdateRefundStatus", strings.Join(orderList, ","), err.Error()))
-		//}
+		if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusOk, tables.TxStatusSending); err != nil {
+			log.Info("UpdateRefundStatus err: ", err.Error(), hashList)
+			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund ckb", notify.GetLarkTextNotifyStr("UpdateRefundStatus", strings.Join(hashList, ","), err.Error()))
+		}
 		return "", fmt.Errorf("SendTransactionWithCheck err: %s", err.Error())
 	} else {
 		refundHash := hash.Hex()

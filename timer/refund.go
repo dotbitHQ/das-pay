@@ -306,7 +306,7 @@ func (d *DasTimer) doOrderRefundCkb(list []*dao.RefundOrderInfo) (string, error)
 		txParams.OutputsData = append(txParams.OutputsData, []byte(""))
 	}
 	// inputs
-	fee := uint64(1e4)
+	fee := uint64(1e6)
 	parseAddrFrom, err := addressCkb.Parse(config.Cfg.Chain.Ckb.Address)
 	if err != nil {
 		return "", fmt.Errorf("address.Parse err:%s %s", err.Error(), config.Cfg.Chain.Ckb.Address)

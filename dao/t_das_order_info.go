@@ -13,7 +13,7 @@ func (d *DbDao) GetOrderByOrderId(orderId string) (order tables.TableDasOrderInf
 
 func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
 	return d.db.Transaction(func(tx *gorm.DB) error {
-		if err := d.db.Model(tables.TableDasOrderInfo{}).
+		if err := tx.Model(tables.TableDasOrderInfo{}).
 			Where("order_id=? AND order_type=? AND pay_status=?",
 				payInfo.OrderId, tables.OrderTypeSelf, tables.TxStatusDefault).
 			Updates(map[string]interface{}{
@@ -23,7 +23,7 @@ func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
 			return err
 		}
 
-		if err := d.db.Model(tables.TableDasOrderPayInfo{}).
+		if err := tx.Model(tables.TableDasOrderPayInfo{}).
 			Where("order_id=? AND `hash`!=? AND status=? AND refund_status=?",
 				payInfo.OrderId, payInfo.Hash, tables.OrderTxStatusConfirm, tables.TxStatusDefault).
 			Updates(map[string]interface{}{
@@ -32,9 +32,9 @@ func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
 			return err
 		}
 
-		if err := d.db.Clauses(clause.OnConflict{
+		if err := tx.Clauses(clause.OnConflict{
 			DoUpdates: clause.AssignmentColumns([]string{
-				"chain_type", "address", "status", "account_id", "refund_status", "refund_hash",
+				"chain_type", "address", "status", "account_id",
 			}),
 		}).Create(&payInfo).Error; err != nil {
 			return err

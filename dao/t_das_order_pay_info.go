@@ -20,8 +20,8 @@ type RefundOrderInfo struct {
 func (d *DbDao) GetNeedRefundOrderList() (list []RefundOrderInfo, err error) {
 	sql := `SELECT p.order_id,p.hash,p.chain_type,p.address,o.pay_token_id,o.pay_amount,p.refund_status 
 FROM t_das_order_pay_info p JOIN t_das_order_info o 
-ON p.refund_status=? AND o.order_type=? AND p.order_id=o.order_id `
-	err = d.db.Raw(sql, tables.TxStatusSending, tables.OrderTypeSelf).Find(&list).Error
+ON p.refund_status=? AND o.order_type=? AND p.order_id=o.order_id AND p.status=? `
+	err = d.db.Raw(sql, tables.TxStatusSending, tables.OrderTypeSelf, tables.OrderTxStatusConfirm).Find(&list).Error
 	return
 }
 

@@ -56,6 +56,6 @@ func (d *DbDao) GetMaybeRejectedPayInfoList() (count int64, err error) {
 
 func (d *DbDao) GetUnRefundTxCount() (count int64, err error) {
 	err = d.db.Model(tables.TableDasOrderPayInfo{}).
-		Where("refund_status=?", tables.TxStatusSending).Count(&count).Error
+		Where("`status`=? AND refund_status=?", tables.OrderTxStatusConfirm, tables.TxStatusSending).Count(&count).Error
 	return
 }

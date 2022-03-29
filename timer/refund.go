@@ -12,6 +12,7 @@ import (
 	"github.com/DeAccountSystems/das-lib/common"
 	"github.com/DeAccountSystems/das-lib/core"
 	"github.com/DeAccountSystems/das-lib/txbuilder"
+	"github.com/DeAccountSystems/das-lib/witness"
 	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	addressCkb "github.com/nervosnetwork/ckb-sdk-go/address"
 	"github.com/nervosnetwork/ckb-sdk-go/indexer"
@@ -330,6 +331,12 @@ func (d *DasTimer) doOrderRefundCkb(list []*dao.RefundOrderInfo) (string, error)
 		})
 		txParams.OutputsData = append(txParams.OutputsData, []byte(""))
 	}
+	// witness
+	actionWitness, err := witness.GenActionDataWitness("order_refund", nil)
+	if err != nil {
+		return "", fmt.Errorf("GenActionDataWitness err: %s", err.Error())
+	}
+	txParams.Witnesses = append(txParams.Witnesses, actionWitness)
 	// tx
 	txBuilder := txbuilder.NewDasTxBuilderFromBase(d.TxBuilderBase, nil)
 	if err := txBuilder.BuildTransaction(&txParams); err != nil {

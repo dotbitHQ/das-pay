@@ -225,6 +225,23 @@ func (c *ConfigCellDataBuilder) BasicCapacity() (uint64, error) {
 	return 0, fmt.Errorf("ConfigCellAccount is nil")
 }
 
+func (c *ConfigCellDataBuilder) BasicCapacityFromOwnerDasAlgorithmId(args string) (uint64, error) {
+	if args == "" {
+		return 0, fmt.Errorf("args is nil")
+	}
+	argsByte := common.Hex2Bytes(args)
+	algorithmId := common.DasAlgorithmId(argsByte[0])
+	switch algorithmId {
+	case common.DasAlgorithmIdEd25519:
+		return 230 * common.OneCkb, nil
+	default:
+		if c.ConfigCellAccount != nil {
+			return molecule.Bytes2GoU64(c.ConfigCellAccount.BasicCapacity().RawData())
+		}
+	}
+	return 0, fmt.Errorf("ConfigCellAccount is nil")
+}
+
 func (c *ConfigCellDataBuilder) TransferAccountThrottle() (uint32, error) {
 	if c.ConfigCellAccount != nil {
 		return molecule.Bytes2GoU32(c.ConfigCellAccount.TransferAccountThrottle().RawData())
@@ -445,4 +462,11 @@ func (c *ConfigCellDataBuilder) Status() (uint8, error) {
 		return molecule.Bytes2GoU8(c.ConfigCellMain.Status().RawData())
 	}
 	return 0, fmt.Errorf("ConfigCellMain is nil")
+}
+
+func (c *ConfigCellDataBuilder) LuckyNumber() (uint32, error) {
+	if c.ConfigCellRelease != nil {
+		return molecule.Bytes2GoU32(c.ConfigCellRelease.LuckyNumber().RawData())
+	}
+	return 0, fmt.Errorf("ConfigCellRelease is nil")
 }

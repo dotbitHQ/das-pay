@@ -132,15 +132,21 @@ func runServer(ctx *cli.Context) error {
 }
 
 func initDas(client rpc.Client) (*core.DasCore, *txbuilder.DasTxBuilderBase, error) {
+	env := core.InitEnvOpt(config.Cfg.Server.Net,
+		common.DasContractNameConfigCellType,
+		common.DasContractNameAccountCellType,
+		common.DasContractNameBalanceCellType,
+		common.DasContractNameDispatchCellType,
+	)
 	ops := []core.DasCoreOption{
 		core.WithClient(client),
-		core.WithDasContractArgs(config.Cfg.DasLib.DasContractArgs),
-		core.WithDasContractCodeHash(config.Cfg.DasLib.DasContractCodeHash),
+		core.WithDasContractArgs(env.ContractArgs),
+		core.WithDasContractCodeHash(env.ContractCodeHash),
 		core.WithDasNetType(config.Cfg.Server.Net),
-		core.WithTHQCodeHash(config.Cfg.DasLib.THQCodeHash),
+		core.WithTHQCodeHash(env.THQCodeHash),
 	}
 	dasCore := core.NewDasCore(ctxServer, &wgServer, ops...)
-	dasCore.InitDasContract(config.Cfg.DasLib.MapDasContract)
+	dasCore.InitDasContract(env.MapContract)
 	if err := dasCore.InitDasConfigCell(); err != nil {
 		return nil, nil, fmt.Errorf("InitDasConfigCell err: %s", err.Error())
 	}

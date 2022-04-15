@@ -16,7 +16,7 @@ var (
 
 func InitCfg(configFilePath string) error {
 	if configFilePath == "" {
-		configFilePath = "./conf/config.yaml"
+		configFilePath = "./config/config.yaml"
 	}
 	log.Info("config file path：", configFilePath)
 	if err := toolib.UnmarshalYamlFile(configFilePath, &Cfg); err != nil {

@@ -30,7 +30,7 @@ git clone https://github.com/DeAccountSystems/das-pay.git
 # compile and run
 cd das-pay
 make pay
-./das_pay_server --config=conf/config.yaml
+./das_pay_server --config=config/config.yaml
 ```
 
 ## Usage

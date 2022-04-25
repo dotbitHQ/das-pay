@@ -18,4 +18,5 @@
 # temp file
 config/config.yaml
 config/config.database.yaml
+config/config.register.yaml
 mysql-data

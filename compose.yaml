@@ -38,6 +38,30 @@ services:
     networks:
       - mynetwork
 
+  redis:
+    image: redis:5.0
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+
+  bit-register:
+    image: slagga/bit-register:latest
+    restart: always
+    working_dir: /app
+    entrypoint: [ "/app/bit-register", "--config", "/app/config/config.yaml" ]
+    ports:
+      - "8119:8119"
+      - "8120:8120"
+    volumes:
+      - $PWD/config/config.register.yaml:/app/config/config.yaml
+    depends_on:
+      - bit-database
+      - redis
+    networks:
+      - mynetwork
+
   bit-pay:
     image: slagga/bit-pay:latest
     restart: always
@@ -46,6 +70,6 @@ services:
     volumes:
       - $PWD/config/config.yaml:/app/config/config.yaml
     depends_on:
-      - bit-database
+      - bit-register
     networks:
       - mynetwork

@@ -14,3 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 .idea
+
+# temp file
+config/config.yaml
+config/config.database.yaml
+mysql-data

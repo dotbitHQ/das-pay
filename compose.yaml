@@ -39,10 +39,10 @@ services:
       - mynetwork
 
   bit-pay:
-    image: slagga/bit-register:latest
+    image: slagga/bit-pay:latest
     restart: always
     working_dir: /app
-    entrypoint: [ "/app/bit-register", "--config", "/app/config/config.yaml" ]
+    entrypoint: [ "/app/bit-pay", "--config", "/app/config/config.yaml" ]
     volumes:
       - $PWD/config/config.yaml:/app/config/config.yaml
     depends_on:

@@ -33,6 +33,15 @@ make pay
 ./das_pay_server --config=config/config.yaml
 ```
 
+## Docker Install & Run
+```bash
+# if you already have a mysql database installed, just run
+docker run -dv $PWD/config/config.yaml:/app/config/config.yaml --name bit-pay-server slagga/bit-pay
+
+# if not, you need docker-compose to automate the installation
+docker-compose up -d
+```
+
 ## Usage
 Set the gateway address of each chain in `conf/config.yaml` ( `private`, the private key of address, is for refund). The whole workflow as below:
 

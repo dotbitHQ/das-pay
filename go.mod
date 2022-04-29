@@ -1,9 +1,9 @@
 module das-pay
 
-go 1.15
+go 1.16
 
 require (
-	github.com/DeAccountSystems/das-lib v0.0.0-20220427084013-4ddc1197fa0f
+	github.com/DeAccountSystems/das-lib v0.0.0-20220429063041-801789fefc99
 	github.com/elazarl/goproxy v0.0.0-20220417044921-416226498f94 // indirect
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fbsobreira/gotron-sdk v0.0.0-20211102183839-58a64f4da5f4
@@ -20,3 +20,7 @@ require (
 	gorm.io/gorm v1.22.1
 	moul.io/http2curl v1.0.0 // indirect
 )
+
+replace github.com/ethereum/go-ethereum v1.9.14 => github.com/ethereum/go-ethereum v1.10.17
+
+replace github.com/ethereum/go-ethereum v1.10.13 => github.com/ethereum/go-ethereum v1.10.17

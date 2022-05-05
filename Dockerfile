@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY . ./
 
-RUN go build -ldflags -s -v -o bit-pay cmd/main.go
+RUN go build -ldflags -s -v -o das-pay cmd/main.go
 
 ##
 ## Deploy
@@ -28,7 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 WORKDIR /app
 
-COPY --from=build /app/bit-pay /app/bit-pay
+COPY --from=build /app/das-pay /app/das-pay
 COPY --from=build /app/config/config.yaml /app/config/config.yaml
 
-ENTRYPOINT ["/app/bit-pay", "--config", "/app/config/config.yaml"]
+ENTRYPOINT ["/app/das-pay", "--config", "/app/config/config.yaml"]

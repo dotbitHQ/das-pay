@@ -298,8 +298,11 @@ func (d *DasTimer) doOrderRefundCkb(list []*dao.RefundOrderInfo) (string, error)
 			Type:     nil,
 		}
 		if dasContract.IsSameTypeId(parseAddr.Script.CodeHash) {
-			oID, _, _, _, _, _ := core.FormatDasLockToHexAddress(parseAddr.Script.Args)
-			if oID == common.DasAlgorithmIdEth712 {
+			ownerHex, _, err := d.DasCore.Daf().ArgsToHex(parseAddr.Script.Args)
+			if err != nil {
+				return "", fmt.Errorf("ArgsToHex err: %s", err.Error())
+			}
+			if ownerHex.DasAlgorithmId == common.DasAlgorithmIdEth712 {
 				output.Type = balanceContract.ToScript(nil)
 			}
 		}

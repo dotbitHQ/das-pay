@@ -1,7 +1,7 @@
 * [Prerequisites](#prerequisites)
 * [Install &amp; Run](#install--run)
-      * [Source Compile](#source-compile)
-      * [Docker](#docker)
+     * [Source Compile](#source-compile)
+     * [Docker](#docker)
 * [Usage](#usage)
 * [Documents](#documents)
 

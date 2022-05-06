@@ -1,5 +1,7 @@
 * [Prerequisites](#prerequisites)
-* [Install &amp; run](#install--run)
+* [Install &amp; Run](#install--run)
+      * [Source Compile](#source-compile)
+      * [Docker](#docker)
 * [Usage](#usage)
 * [Documents](#documents)
 
@@ -19,7 +21,9 @@ Build & run with [das-register](https://github.com/DeAccountSystems/das-register
 * [das-database](https://github.com/DeAccountSystems/das-database)
 * [das-register](https://github.com/DeAccountSystems/das-register)
 
-## Install & run
+## Install & Run
+
+### Source Compile
 
 ```bash
 # get the code
@@ -33,23 +37,22 @@ make pay
 ./das_pay_server --config=config/config.yaml
 ```
 
-## Docker Install & Run
+### Docker
 * docker >= 20.10
 * docker-compose >= 2.2.2
 
-if you already have a mysql database installed, just run
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose up -d
+```
+
+_if you already have a mysql installed, just run_
 ```bash
 docker run -dv $PWD/config/config.yaml:/app/config/config.yaml --name das-pay-server slagga/das-pay
 ```
 
-if not, you need docker-compose to automate the installation
-```bash
-curl -SL https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
-
-sudo chmod +x /usr/local/bin/docker-compose
-
-docker-compose up -d
-```
 
 ## Usage
 Set the gateway address of each chain in `conf/config.yaml` ( `private`, the private key of address, is for refund). The whole workflow as below:

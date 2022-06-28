@@ -15,4 +15,3 @@ refund:
 
 update:
 	go mod tidy
-	go mod vendor

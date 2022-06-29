@@ -12,8 +12,10 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-vendor/
+vendor
 .idea
+das_pay_server
+das_refund_server
 
 # temp file
 config/config.yaml

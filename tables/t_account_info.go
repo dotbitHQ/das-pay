@@ -1,6 +1,6 @@
 package tables
 
-import "github.com/DeAccountSystems/das-lib/common"
+import "github.com/dotbitHQ/das-lib/common"
 
 type TableAccountInfo struct {
 	Id                  uint64                `json:"id" gorm:"column:id;primary_key;AUTO_INCREMENT"`

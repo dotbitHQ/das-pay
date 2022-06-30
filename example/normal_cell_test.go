@@ -2,7 +2,7 @@ package example
 
 import (
 	"fmt"
-	"github.com/DeAccountSystems/das-lib/core"
+	"github.com/dotbitHQ/das-lib/core"
 	"github.com/nervosnetwork/ckb-sdk-go/address"
 	"testing"
 )

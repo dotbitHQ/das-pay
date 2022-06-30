@@ -1,5 +1,5 @@
 # build file
-GO_BUILD=go build -mod=readonly -ldflags -s -v
+GO_BUILD=go build -ldflags -s -v
 
 pay: BIN_BINARY_NAME=das_pay_server
 pay:

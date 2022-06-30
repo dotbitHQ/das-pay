@@ -7,7 +7,7 @@
 
 # das-pay
 
-Build & run with [das-register](https://github.com/DeAccountSystems/das-register). Support CKB, TRX, BNB, ETH and Matic to pay the registration fee.
+Build & run with [das-register](https://github.com/dotbitHQ/das-register). Support CKB, TRX, BNB, ETH and Matic to pay the registration fee.
 
 ## Prerequisites
 
@@ -18,8 +18,8 @@ Build & run with [das-register](https://github.com/DeAccountSystems/das-register
 * [ETH Node](https://ethereum.org/en/community/support/#building-support)
 * [BSC Node](https://docs.binance.org/smart-chain/developer/fullnode.html)
 * [Tron Node](https://developers.tron.network/docs/fullnode)
-* [das-database](https://github.com/DeAccountSystems/das-database)
-* [das-register](https://github.com/DeAccountSystems/das-register)
+* [das-database](https://github.com/dotbitHQ/das-database)
+* [das-register](https://github.com/dotbitHQ/das-register)
 
 ## Install & Run
 
@@ -27,7 +27,7 @@ Build & run with [das-register](https://github.com/DeAccountSystems/das-register
 
 ```bash
 # get the code
-git clone https://github.com/DeAccountSystems/das-pay.git
+git clone https://github.com/dotbitHQ/das-pay.git
 
 # edit config/config.yaml and run das-database and init db of das-register before run das_pay_server
 
@@ -99,5 +99,5 @@ N                   │              │   │
 
 ```
 ## Documents
-* [What is DAS](https://github.com/DeAccountSystems/das-contracts/blob/master/docs/en/Overview-of-DAS.md)
-* [What is a DAS transaction on CKB](https://github.com/DeAccountSystems/das-contracts/blob/master/docs/en/Data-Structure-and-Protocol/Transaction-Structure.md)
+* [What is DAS](https://github.com/dotbitHQ/das-contracts/blob/master/docs/en/Overview-of-DAS.md)
+* [What is a DAS transaction on CKB](https://github.com/dotbitHQ/das-contracts/blob/master/docs/en/Data-Structure-and-Protocol/Transaction-Structure.md)

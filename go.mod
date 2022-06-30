@@ -21,6 +21,11 @@ require (
 	moul.io/http2curl v1.0.0 // indirect
 )
 
+replace (
+	github.com/btcsuite/btcd v0.22.0-beta => github.com/btcsuite/btcd v0.23.1
+	github.com/btcsuite/btcd v0.22.0-beta.0.20220111032746-97732e52810c => github.com/btcsuite/btcd v0.23.1
+)
+
 //replace github.com/ethereum/go-ethereum v1.9.14 => github.com/ethereum/go-ethereum v1.10.17
 
 //replace github.com/ethereum/go-ethereum v1.10.11 => github.com/ethereum/go-ethereum v1.10.17

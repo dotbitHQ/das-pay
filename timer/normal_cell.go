@@ -7,6 +7,7 @@ import (
 	"github.com/dotbitHQ/das-lib/common"
 	"github.com/dotbitHQ/das-lib/core"
 	"github.com/nervosnetwork/ckb-sdk-go/address"
+	"github.com/nervosnetwork/ckb-sdk-go/indexer"
 	"time"
 )
 
@@ -18,9 +19,15 @@ func (d *DasTimer) doNormalCell() error {
 	if err != nil {
 		return fmt.Errorf("address.Parse err: %s", err.Error())
 	}
-	liveCells, total, err := core.GetSatisfiedCapacityLiveCell(d.DasCore.Client(), nil, parseAddr.Script, nil, 0, 0)
+	liveCells, total, err := d.DasCore.GetBalanceCells(&core.ParamGetBalanceCells{
+		DasCache:          nil,
+		LockScript:        parseAddr.Script,
+		CapacityNeed:      0,
+		CapacityForChange: 0,
+		SearchOrder:       indexer.SearchOrderDesc,
+	})
 	if err != nil {
-		return fmt.Errorf("GetSatisfiedCapacityLiveCell err: %s", err.Error())
+		return fmt.Errorf("GetBalanceCells err: %s", err.Error())
 	}
 	log.Info("doNormalCell:", len(liveCells), total)
 	capacity := total / common.OneCkb

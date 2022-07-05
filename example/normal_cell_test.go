@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dotbitHQ/das-lib/core"
 	"github.com/nervosnetwork/ckb-sdk-go/address"
+	"github.com/nervosnetwork/ckb-sdk-go/indexer"
 	"testing"
 )
 
@@ -18,7 +19,13 @@ func TestNormalCell(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	liveCells, total, err := core.GetSatisfiedCapacityLiveCell(dc.Client(), nil, parseAddr.Script, nil, 0, 0)
+	liveCells, total, err := dc.GetBalanceCells(&core.ParamGetBalanceCells{
+		DasCache:          nil,
+		LockScript:        parseAddr.Script,
+		CapacityNeed:      0,
+		CapacityForChange: 0,
+		SearchOrder:       indexer.SearchOrderDesc,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}

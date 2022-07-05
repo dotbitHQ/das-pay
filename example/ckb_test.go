@@ -8,6 +8,7 @@ import (
 	"github.com/dotbitHQ/das-lib/sign"
 	"github.com/dotbitHQ/das-lib/txbuilder"
 	"github.com/nervosnetwork/ckb-sdk-go/address"
+	"github.com/nervosnetwork/ckb-sdk-go/indexer"
 	"github.com/nervosnetwork/ckb-sdk-go/rpc"
 	"github.com/nervosnetwork/ckb-sdk-go/types"
 	"sync"
@@ -89,7 +90,13 @@ func TestTransactionCkb(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	liveCells, total, err := core.GetSatisfiedCapacityLiveCell(dc.Client(), nil, fromParseAddress.Script, nil, amount, common.MinCellOccupiedCkb)
+	liveCells, total, err := dc.GetBalanceCells(&core.ParamGetBalanceCells{
+		DasCache:          nil,
+		LockScript:        fromParseAddress.Script,
+		CapacityNeed:      amount,
+		CapacityForChange: common.MinCellOccupiedCkb,
+		SearchOrder:       indexer.SearchOrderDesc,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}

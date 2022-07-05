@@ -315,9 +315,15 @@ func (d *DasTimer) doOrderRefundCkb(list []*dao.RefundOrderInfo) (string, error)
 	if err != nil {
 		return "", fmt.Errorf("address.Parse err:%s %s", err.Error(), config.Cfg.Chain.Ckb.Address)
 	}
-	liveCells, total, err := core.GetSatisfiedCapacityLiveCellWithOrder(d.ChainCkb.Client, nil, parseAddrFrom.Script, nil, totalAmount.BigInt().Uint64()+fee, common.MinCellOccupiedCkb, indexer.SearchOrderDesc)
+	liveCells, total, err := d.DasCore.GetBalanceCells(&core.ParamGetBalanceCells{
+		DasCache:          nil,
+		LockScript:        parseAddrFrom.Script,
+		CapacityNeed:      totalAmount.BigInt().Uint64() + fee,
+		CapacityForChange: common.MinCellOccupiedCkb,
+		SearchOrder:       indexer.SearchOrderDesc,
+	})
 	if err != nil {
-		return "", fmt.Errorf("GetSatisfiedCapacityLiveCell err: %s", err.Error())
+		return "", fmt.Errorf("GetBalanceCells err: %s", err.Error())
 	}
 	for _, v := range liveCells {
 		txParams.Inputs = append(txParams.Inputs, &types.CellInput{

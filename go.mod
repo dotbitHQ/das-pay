@@ -3,7 +3,7 @@ module das-pay
 go 1.16
 
 require (
-	github.com/dotbitHQ/das-lib v0.0.0-20220718022750-cfcd2c5b88b7
+	github.com/dotbitHQ/das-lib v1.0.1-0.20220727062848-16eeb2a60739
 	github.com/elazarl/goproxy v0.0.0-20220529153421-8ea89ba92021 // indirect
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fbsobreira/gotron-sdk v0.0.0-20211102183839-58a64f4da5f4

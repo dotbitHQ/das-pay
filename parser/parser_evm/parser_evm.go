@@ -62,7 +62,7 @@ func (p *ParserEvm) Parser() {
 					log.Info("RunParser:", p.ParserType.ToString(), p.CurrentBlockNumber, latestBlockNumber)
 					time.Sleep(time.Second * 10)
 				}
-				time.Sleep(time.Millisecond * 300)
+				time.Sleep(time.Second)
 			}
 		case <-p.Ctx.Done():
 			log.Warnf("%s parse done", p.ParserType.ToString())

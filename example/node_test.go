@@ -25,3 +25,11 @@ func TestEthNode(t *testing.T) {
 	}
 	fmt.Println(chainEth.BestBlockNumber())
 }
+
+func TestCkb(t *testing.T) {
+	c, err := getClientTestnet2()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(c.GetTipBlockNumber(context.Background()))
+}

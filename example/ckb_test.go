@@ -16,8 +16,8 @@ import (
 )
 
 func getClientTestnet2() (rpc.Client, error) {
-	ckbUrl := "http://100.77.204.22:8224"
-	indexerUrl := "http://100.77.204.22:8226"
+	ckbUrl := "https://testnet.ckb.dev/"
+	indexerUrl := "https://testnet.ckb.dev/indexer"
 	return rpc.DialWithIndexer(ckbUrl, indexerUrl)
 }
 

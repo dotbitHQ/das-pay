@@ -10,6 +10,7 @@ import (
 	"fmt"
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/scorpiotzh/mylog"
+	"github.com/scorpiotzh/toolib"
 	"github.com/shopspring/decimal"
 	"strings"
 	"sync"
@@ -129,6 +130,10 @@ func (p *ParserEvm) parserSubMode() error {
 	} else {
 		blockHash := block.Hash
 		parentHash := block.ParentHash
+		if block.Hash == "" || block.ParentHash == "" {
+			log.Info("GetBlockByNumber:", p.CurrentBlockNumber, toolib.JsonString(&block))
+			return fmt.Errorf("GetBlockByNumber data is nil: [%d]", p.CurrentBlockNumber)
+		}
 		log.Info("parserSubMode:", p.ParserType.ToString(), blockHash, parentHash)
 		if fork, err := p.CheckFork(parentHash); err != nil {
 			return fmt.Errorf("CheckFork err: %s", err.Error())
@@ -169,6 +174,10 @@ func (p *ParserEvm) parserConcurrencyMode() error {
 		block, err := p.ChainEvm.GetBlockByNumber(bn)
 		if err != nil {
 			return fmt.Errorf("GetBlockByNumber err:%s [%d]", err.Error(), bn)
+		}
+		if block.Hash == "" || block.ParentHash == "" {
+			log.Info("GetBlockByNumber:", bn, toolib.JsonString(&block))
+			return fmt.Errorf("GetBlockByNumber data is nil: [%d]", bn)
 		}
 		hash := block.Hash
 		parentHash := block.ParentHash

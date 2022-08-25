@@ -49,14 +49,18 @@ func (p *ParserEvm) Parser() {
 					nowTime := time.Now()
 					if err = p.parserConcurrencyMode(); err != nil {
 						log.Error("parserConcurrencyMode err:", p.ParserType.ToString(), err.Error(), p.CurrentBlockNumber)
-						notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, p.ParserType.ToString()+" Parse", notify.GetLarkTextNotifyStr("parserConcurrencyMode", "", err.Error()))
+						if !strings.Contains(err.Error(), "GetBlockByNumber data is nil") {
+							notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, p.ParserType.ToString()+" Parse", notify.GetLarkTextNotifyStr("parserConcurrencyMode", "", err.Error()))
+						}
 					}
 					log.Warn("parserConcurrencyMode time:", p.ParserType.ToString(), time.Since(nowTime).Seconds())
 				} else if p.CurrentBlockNumber < (latestBlockNumber - p.ConfirmNum) { // check rollback
 					nowTime := time.Now()
 					if err = p.parserSubMode(); err != nil {
 						log.Error("parserSubMode err:", p.ParserType.ToString(), err.Error(), p.CurrentBlockNumber)
-						notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, p.ParserType.ToString()+" Parse", notify.GetLarkTextNotifyStr("parserSubMode", "", err.Error()))
+						if !strings.Contains(err.Error(), "GetBlockByNumber data is nil") {
+							notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, p.ParserType.ToString()+" Parse", notify.GetLarkTextNotifyStr("parserSubMode", "", err.Error()))
+						}
 					}
 					log.Warn("parserSubMode time:", p.ParserType.ToString(), time.Since(nowTime).Seconds())
 				} else {

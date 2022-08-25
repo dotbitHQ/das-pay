@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	TronNode = ""
+	TronNode = "grpc.trongrid.io:50051"
 )
 
 func TestTronGetBlockByNumber(t *testing.T) {

@@ -57,11 +57,11 @@ func TestGetBalance(t *testing.T) {
 }
 
 func TestGetBlockByNumber(t *testing.T) {
-	chainEth, err := chain_evm.Initialize(context.Background(), EthNode, 0)
+	chainEth, err := chain_evm.Initialize(context.Background(), "https://rpc.ankr.com/polygon", 0)
 	if err != nil {
 		t.Fatal(err)
 	}
-	block, err := chainEth.GetBlockByNumber(6144965)
+	block, err := chainEth.GetBlockByNumber(31959896)
 	if err != nil {
 		t.Fatal(err)
 	}

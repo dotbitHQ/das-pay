@@ -64,7 +64,7 @@ func (d *DasTimer) Run() error {
 	tickerNode := time.NewTicker(time.Minute * 3)
 	tickerDasInfo := time.NewTicker(time.Hour)
 	tickerRejected := time.NewTicker(time.Minute * 20)
-	tickerNormalCell := time.NewTicker(time.Hour)
+	tickerNormalCell := time.NewTicker(time.Minute * 20)
 
 	d.Wg.Add(1)
 	go func() {

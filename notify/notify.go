@@ -51,7 +51,7 @@ func SendLarkTextNotify(key, title, text string) {
 		},
 	}
 	url := fmt.Sprintf(LarkNotifyUrl, key)
-	_, body, errs := gorequest.New().Post(url).Timeout(time.Second * 10).SendStruct(&data).End()
+	_, body, errs := gorequest.New().Post(url).Timeout(time.Second*10).Retry(5, 5*time.Second).SendStruct(&data).End()
 	if len(errs) > 0 {
 		log.Error("SendLarkTextNotify req err:", errs)
 	} else {
@@ -84,7 +84,7 @@ func SendLarkTextNotifyAtAll(key, title, text string) {
 		},
 	}
 	url := fmt.Sprintf(LarkNotifyUrl, key)
-	_, body, errs := gorequest.New().Post(url).Timeout(time.Second * 10).SendStruct(&data).End()
+	_, body, errs := gorequest.New().Post(url).Timeout(time.Second*10).Retry(5, 5*time.Second).SendStruct(&data).End()
 	if len(errs) > 0 {
 		log.Error("SendLarkTextNotifyAtAll req err:", errs)
 	} else {

@@ -13,3 +13,9 @@ refund:
 
 update:
 	go mod tidy
+
+docker:
+	docker build --network host -t dotbitteam/das-pay:latest .
+
+docker-publish:
+	docker image push dotbitteam/das-pay:latest

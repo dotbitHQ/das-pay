@@ -4,14 +4,16 @@ server:
   hedge_url: "" # call hedge token
 db:
   mysql:
-    addr: "127.0.0.1:3306" # 172.17.0.1: docker 182.17.0.1: docker-compose
+    # Use mysql instead if running with docker compose.
+    addr: "127.0.0.1:3306"
     user: "root"
     password: "123456"
     db_name: "das_register"
     max_open_conn: 100
     max_idle_conn: 100
   parser_mysql:
-    addr: "127.0.0.1:3306" # 172.17.0.1: docker 182.17.0.1: docker-compose
+    # Use mysql instead if running with docker compose.
+    addr: "127.0.0.1:3306"
     user: "root"
     password: "123456"
     db_name: "das_database"
@@ -21,6 +23,7 @@ chain:
   ckb:
     refund: true # do refund
     switch: true # start tx parse
+    # Use host.docker.internal instead if running with docker compose.
     ckb_url: "http://127.0.0.1:8114"
     index_url: "http://127.0.0.1:8116"
     address: "" # receiver's address

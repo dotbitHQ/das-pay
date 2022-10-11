@@ -31,6 +31,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 WORKDIR /app
 
 COPY --from=build /app/das-pay /app/das-pay
-COPY --from=build /app/config/config.yaml /app/config/config.yaml
+COPY --from=build /app/config/config.example.yaml /app/config/config.yaml
 
 ENTRYPOINT ["/app/das-pay", "--config", "/app/config/config.yaml"]

@@ -93,8 +93,8 @@ func (d *DasTimer) doOrderRefund() error {
 				private:    config.Cfg.Chain.Bsc.Private,
 			}
 			if hash, err := d.doOrderRefundEvm(&req); err != nil {
-				log.Error("doOrderRefundEvm bnb err:", err.Error(), v.OrderId)
-				notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund bnb", notify.GetLarkTextNotifyStr("doOrderRefundEvm", v.OrderId, err.Error()))
+				log.Error("doOrderRefundEvm bnb err:", err.Error(), v.OrderId, nonceBsc)
+				notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund bnb", notify.GetLarkTextNotifyStr("doOrderRefundEvm", v.OrderId, fmt.Sprintf("%s[%d]", err.Error(), nonceBsc)))
 			} else if hash != "" {
 				log.Info("doOrderRefundEvm bnb ok:", v.OrderId, hash)
 				nonceBsc += 1

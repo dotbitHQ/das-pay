@@ -97,7 +97,7 @@ func (d *DasTimer) doOrderRefund() error {
 				log.Error("doOrderRefundEvm bnb err:", err.Error(), v.OrderId, nonceBsc)
 				notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund bnb", notify.GetLarkTextNotifyStr("doOrderRefundEvm", v.OrderId, fmt.Sprintf("%s[%d]", err.Error(), nonceBsc)))
 			} else if hash != "" {
-				log.Info("doOrderRefundEvm bnb ok:", v.OrderId, hash)
+				log.Info("doOrderRefundEvm bnb ok:", v.OrderId, hash, nonceBsc)
 				nonceBsc += 1
 			}
 		case tables.TokenIdMatic:

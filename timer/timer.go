@@ -135,7 +135,7 @@ func (d *DasTimer) DoOrderRefund() error {
 }
 
 func (d *DasTimer) DoStart() {
-	tickerNow := time.NewTicker(time.Second * 20)
+	tickerNow := time.NewTicker(time.Second * 10)
 	go func() {
 		select {
 		case <-tickerNow.C:

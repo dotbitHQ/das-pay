@@ -105,6 +105,7 @@ func runServer(ctx *cli.Context) error {
 	if err := dt.DoOrderRefund(); err != nil {
 		return fmt.Errorf("dt.DoOrderRefund() err: %s", err.Error())
 	}
+	dt.DoStart()
 
 	// ============= service end =============
 	toolib.ExitMonitoring(func(sig os.Signal) {

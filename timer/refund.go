@@ -61,6 +61,7 @@ func (d *DasTimer) doOrderRefund() error {
 		switch v.PayTokenId {
 		case tables.TokenIdCkb, tables.TokenIdDas:
 			ckbOrderList = append(ckbOrderList, &list[i])
+
 		case tables.TokenIdEth:
 			req := doOrderRefundEvmReq{
 				order:      &list[i],

@@ -134,6 +134,24 @@ func (d *DasTimer) DoOrderRefund() error {
 	return nil
 }
 
+func (d *DasTimer) DoStart() {
+	tickerNow := time.NewTicker(time.Second * 20)
+	go func() {
+		select {
+		case <-tickerNow.C:
+			log.Info("DoStart start")
+			if err := d.doOrderRefund(); err != nil {
+				log.Error("doOrderRefund err: %s", err.Error())
+			}
+			log.Info("RunDoStartDoRefundToWhichOwner end")
+		case <-d.Ctx.Done():
+			log.Info("DoStart done")
+			return
+		}
+		//}
+	}()
+}
+
 func (d *DasTimer) CloseCron() {
 	log.Warn("cron done")
 	if d.cron != nil {

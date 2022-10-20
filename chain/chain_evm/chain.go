@@ -51,7 +51,7 @@ func (c *ChainEvm) EstimateGas(from, to string, value decimal.Decimal, input []b
 	gasPrice, _ = decimal.NewFromString(fmt.Sprintf("%d", fee))
 
 	log.Info("EstimateGas:", from, to, value, gasPrice, gasLimit, addFee)
-	if addFee > 1 && addFee < 2 {
+	if addFee > 1 && addFee < 5 {
 		gasPrice = gasPrice.Mul(decimal.NewFromFloat(addFee))
 	}
 	return

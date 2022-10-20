@@ -54,6 +54,7 @@ func (d *DasTimer) doOrderRefund() error {
 		noncePolygon = nonce
 	}
 	var ckbOrderList []*dao.RefundOrderInfo
+	bnbNonceTooLow := false
 	for i, v := range list {
 		if v.RefundStatus != tables.TxStatusSending {
 			continue
@@ -82,6 +83,9 @@ func (d *DasTimer) doOrderRefund() error {
 				nonceEth += 1
 			}
 		case tables.TokenIdBnb:
+			if bnbNonceTooLow {
+				break
+			}
 			req := doOrderRefundEvmReq{
 				order:      &list[i],
 				nonce:      nonceBsc,
@@ -96,6 +100,9 @@ func (d *DasTimer) doOrderRefund() error {
 			if hash, err := d.doOrderRefundEvm(&req); err != nil {
 				log.Error("doOrderRefundEvm bnb err:", err.Error(), v.OrderId, nonceBsc)
 				notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund bnb", notify.GetLarkTextNotifyStr("doOrderRefundEvm", v.OrderId, fmt.Sprintf("%s[%d]", err.Error(), nonceBsc)))
+				if strings.Contains(err.Error(), "nonce too low") {
+					bnbNonceTooLow = true
+				}
 			} else if hash != "" {
 				log.Info("doOrderRefundEvm bnb ok:", v.OrderId, hash, nonceBsc)
 				nonceBsc += 1

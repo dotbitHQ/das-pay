@@ -4,7 +4,10 @@ import (
 	"context"
 	"das-pay/chain/chain_evm"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/shopspring/decimal"
+	"strings"
 	"testing"
 )
 
@@ -74,5 +77,29 @@ func TestBestBlockNumber(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Println(chainEth.BestBlockNumber())
+
+}
+
+func TestBscTx(t *testing.T) {
+	str := ``
+
+	list := strings.Split(str, "\n")
+	fmt.Println("len:", len(list))
+	list = nil
+	const url = "https://rpc.ankr.com/bsc" // url string
+	rpcClient, err := ethclient.Dial(url)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(rpcClient.PendingNonceAt(context.Background(), common.HexToAddress("")))
+
+	//for _, v := range list {
+	//	tx, isP, err := rpcClient.TransactionByHash(context.Background(), common.HexToHash(v))
+	//	if err != nil {
+	//		fmt.Println(err.Error())
+	//	} else {
+	//		fmt.Println(tx.Nonce(), isP, v)
+	//	}
+	//}
 
 }

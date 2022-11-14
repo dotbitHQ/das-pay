@@ -154,7 +154,7 @@ func TestBscOut(t *testing.T) {
 									t.Fatal(err)
 								}
 								fromHex := asMessage.From().Hex()
-								if strings.EqualFold("0x497F300c628cd37Bc4f2E1A2864b11570E0f22A8", fromHex) {
+								if strings.EqualFold("", fromHex) {
 									orderId := string(v.Data())
 									updateMap(orderId)
 								}
@@ -192,9 +192,9 @@ func TestBscNonce(t *testing.T) {
 	fmt.Println(rpcClient.PendingNonceAt(context.Background(), common.HexToAddress("")))
 
 	str := "INSERT INTO t_das_order_pay_info(`hash`,order_id,chain_type,address,`status`,refund_status)" +
-		"VALUES('0x1-%d','order_id_matic_20221021',1,'',1,1);"
+		"VALUES('0x1-%d','order_id_bnb_20221020',1,'',1,1);"
 
-	for i := 0; i < 100; i++ {
+	for i := 600; i < 720; i++ {
 		fmt.Println(fmt.Sprintf(str, i))
 	}
 
@@ -205,7 +205,7 @@ func TestBscTx(t *testing.T) {
 
 	list := strings.Split(str, "\n")
 	fmt.Println("len:", len(list))
-	const url = "https://rpc.ankr.com/polygon" //"https://rpc.ankr.com/bsc" // url string
+	const url = "https://rpc.ankr.com/bsc" //"https://rpc.ankr.com/bsc" // url string
 	rpcClient, err := ethclient.Dial(url)
 	if err != nil {
 		panic(err)

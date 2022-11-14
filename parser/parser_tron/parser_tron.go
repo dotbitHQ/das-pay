@@ -147,6 +147,11 @@ func (p *ParserTron) parserSubMode() error {
 		return fmt.Errorf("GetBlockByNumber err: %s", err.Error())
 	} else {
 		blockHash := hex.EncodeToString(block.Blockid)
+		if block.BlockHeader == nil {
+			return fmt.Errorf("parserSubMode: block.BlockHeader is nil")
+		} else if block.BlockHeader.RawData == nil {
+			return fmt.Errorf("parserSubMode: block.BlockHeader.RawData is nil")
+		}
 		parentHash := hex.EncodeToString(block.BlockHeader.RawData.ParentHash)
 		log.Info("parserSubMode:", p.ParserType.ToString(), blockHash, parentHash)
 

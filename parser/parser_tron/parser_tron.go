@@ -195,6 +195,11 @@ func (p *ParserTron) parserConcurrencyMode() error {
 		if err != nil {
 			return fmt.Errorf("GetBlockByNumber err:%s [%d]", err.Error(), bn)
 		}
+		if block.BlockHeader == nil {
+			return fmt.Errorf("parserSubMode: block.BlockHeader is nil")
+		} else if block.BlockHeader.RawData == nil {
+			return fmt.Errorf("parserSubMode: block.BlockHeader.RawData is nil")
+		}
 		blockHash := hex.EncodeToString(block.Blockid)
 		parentHash := hex.EncodeToString(block.BlockHeader.RawData.ParentHash)
 		blockList[i] = tables.TableBlockParserInfo{

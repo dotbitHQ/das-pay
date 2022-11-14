@@ -148,9 +148,9 @@ func (p *ParserTron) parserSubMode() error {
 	} else {
 		blockHash := hex.EncodeToString(block.Blockid)
 		if block.BlockHeader == nil {
-			return fmt.Errorf("parserSubMode: block.BlockHeader is nil")
+			return fmt.Errorf("parserSubMode: block.BlockHeader is nil[%d]", p.CurrentBlockNumber)
 		} else if block.BlockHeader.RawData == nil {
-			return fmt.Errorf("parserSubMode: block.BlockHeader.RawData is nil")
+			return fmt.Errorf("parserSubMode: block.BlockHeader.RawData is nil[%d]", p.CurrentBlockNumber)
 		}
 		parentHash := hex.EncodeToString(block.BlockHeader.RawData.ParentHash)
 		log.Info("parserSubMode:", p.ParserType.ToString(), blockHash, parentHash)
@@ -196,9 +196,9 @@ func (p *ParserTron) parserConcurrencyMode() error {
 			return fmt.Errorf("GetBlockByNumber err:%s [%d]", err.Error(), bn)
 		}
 		if block.BlockHeader == nil {
-			return fmt.Errorf("parserSubMode: block.BlockHeader is nil")
+			return fmt.Errorf("parserSubMode: block.BlockHeader is nil[%d]", bn)
 		} else if block.BlockHeader.RawData == nil {
-			return fmt.Errorf("parserSubMode: block.BlockHeader.RawData is nil")
+			return fmt.Errorf("parserSubMode: block.BlockHeader.RawData is nil[%d]", bn)
 		}
 		blockHash := hex.EncodeToString(block.Blockid)
 		parentHash := hex.EncodeToString(block.BlockHeader.RawData.ParentHash)

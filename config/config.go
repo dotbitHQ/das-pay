@@ -71,6 +71,17 @@ type CfgServer struct {
 		Tron    EvmNode `json:"tron" yaml:"tron"`
 		Bsc     EvmNode `json:"bsc" yaml:"bsc"`
 		Polygon EvmNode `json:"polygon" yaml:"polygon"`
+		Doge    struct {
+			Refund             bool   `json:"refund" yaml:"refund"`
+			Switch             bool   `json:"switch" yaml:"switch"`
+			NodeRpc            string `json:"node_rpc" yaml:"node_rpc"`
+			User               string `json:"user" yaml:"user"`
+			Password           string `json:"password" yaml:"password"`
+			Address            string `json:"address" yaml:"address"`
+			CurrentBlockNumber uint64 `json:"current_block_number" yaml:"current_block_number"`
+			ConfirmNum         uint64 `json:"confirm_num" yaml:"confirm_num"`
+			ConcurrencyNum     uint64 `json:"concurrency_num" yaml:"concurrency_num"`
+		} `json:"doge" yaml:"doge"`
 	} `json:"chain" yaml:"chain"`
 }
 

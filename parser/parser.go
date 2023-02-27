@@ -7,12 +7,14 @@ import (
 	"das-pay/chain/chain_tron"
 	"das-pay/config"
 	"das-pay/dao"
+	"das-pay/parser/parser_bitcoin"
 	"das-pay/parser/parser_ckb"
 	"das-pay/parser/parser_common"
 	"das-pay/parser/parser_evm"
 	"das-pay/parser/parser_tron"
 	"das-pay/tables"
 	"fmt"
+	"github.com/dotbitHQ/das-lib/bitcoin"
 	"github.com/dotbitHQ/das-lib/common"
 	"strings"
 	"sync"
@@ -24,6 +26,7 @@ type KitParser struct {
 	ParserPolygon *parser_evm.ParserEvm
 	ParserCkb     *parser_ckb.ParserCkb
 	ParserTron    *parser_tron.ParserTron
+	ParserDoge    *parser_bitcoin.ParserBitcoin
 
 	Ctx    context.Context
 	Cancel context.CancelFunc
@@ -53,6 +56,7 @@ func NewKitParser(ctx context.Context, cancel context.CancelFunc, wg *sync.WaitG
 	if err := kp.initParserCkb(); err != nil {
 		return nil, err
 	}
+	kp.initParserDoge()
 	return &kp, nil
 }
 
@@ -178,6 +182,28 @@ func (k *KitParser) initParserCkb() error {
 	return nil
 }
 
+func (k *KitParser) initParserDoge() {
+	nodeRpc := bitcoin.BaseRequest{
+		RpcUrl:   config.Cfg.Chain.Doge.NodeRpc,
+		User:     config.Cfg.Chain.Doge.User,
+		Password: config.Cfg.Chain.Doge.Password,
+		Proxy:    "",
+	}
+	k.ParserDoge = &parser_bitcoin.ParserBitcoin{
+		ParserCommon: parser_common.ParserCommon{
+			Ctx:                k.Ctx,
+			Wg:                 k.Wg,
+			DbDao:              k.DbDao,
+			ParserType:         tables.ParserTypeDoge,
+			Address:            config.Cfg.Chain.Doge.Address,
+			CurrentBlockNumber: config.Cfg.Chain.Doge.CurrentBlockNumber,
+			ConcurrencyNum:     config.Cfg.Chain.Doge.ConcurrencyNum,
+			ConfirmNum:         config.Cfg.Chain.Doge.ConfirmNum,
+		},
+		NodeRpc: &nodeRpc,
+	}
+}
+
 func (k *KitParser) Run() {
 	if config.Cfg.Chain.Ckb.Switch {
 		go k.ParserCkb.Parser()
@@ -193,5 +219,8 @@ func (k *KitParser) Run() {
 	}
 	if config.Cfg.Chain.Polygon.Switch {
 		go k.ParserPolygon.Parser()
+	}
+	if config.Cfg.Chain.Doge.Switch {
+		go k.ParserDoge.Parser()
 	}
 }

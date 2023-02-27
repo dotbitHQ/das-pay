@@ -35,10 +35,10 @@ func (p *ParserBitcoin) initCurrentBlockNumber() error {
 	return nil
 }
 
-func (p *ParserBitcoin) Parser() error {
-
+func (p *ParserBitcoin) Parser() {
 	if err := p.initCurrentBlockNumber(); err != nil {
-		return fmt.Errorf("initCurrentBlockNumber err: %s", err.Error())
+		log.Error("initCurrentBlockNumber err: ", err.Error())
+		return
 	}
 	atomic.AddUint64(&p.CurrentBlockNumber, 1)
 	p.Wg.Add(1)
@@ -69,7 +69,7 @@ func (p *ParserBitcoin) Parser() error {
 			}
 		case <-p.Ctx.Done():
 			p.Wg.Done()
-			return nil
+			return
 		}
 	}
 }

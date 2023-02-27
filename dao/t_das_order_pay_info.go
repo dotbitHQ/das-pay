@@ -59,3 +59,8 @@ func (d *DbDao) GetUnRefundTxCount() (count int64, err error) {
 		Where("`status`=? AND refund_status=?", tables.OrderTxStatusConfirm, tables.TxStatusSending).Count(&count).Error
 	return
 }
+
+func (d *DbDao) GetPayInfoByHash(hash string) (info tables.TableDasOrderPayInfo, err error) {
+	err = d.db.Where("hash=?", hash).Find(&info).Error
+	return
+}

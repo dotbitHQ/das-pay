@@ -3,8 +3,7 @@ module das-pay
 go 1.16
 
 require (
-	github.com/dotbitHQ/das-lib v1.0.1-0.20221031074915-2a8a6bbb7d16
-	github.com/elazarl/goproxy v0.0.0-20220529153421-8ea89ba92021 // indirect
+	github.com/dotbitHQ/das-lib v1.0.1-0.20230224050042-4dff1b0a9e08
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fbsobreira/gotron-sdk v0.0.0-20211102183839-58a64f4da5f4
 	github.com/fsnotify/fsnotify v1.5.4
@@ -18,7 +17,6 @@ require (
 	github.com/urfave/cli/v2 v2.5.0
 	google.golang.org/grpc v1.46.0
 	gorm.io/gorm v1.22.1
-	moul.io/http2curl v1.0.0 // indirect
 )
 
 replace (

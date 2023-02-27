@@ -31,6 +31,7 @@ const (
 	ParserTypeTRON    = 3
 	ParserTypeBSC     = 5
 	ParserTypePOLYGON = 6
+	ParserTypeDoge    = 7
 )
 
 func (p ParserType) ToChainType() common.ChainType {

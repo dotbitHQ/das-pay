@@ -78,6 +78,7 @@ type CfgServer struct {
 			User               string `json:"user" yaml:"user"`
 			Password           string `json:"password" yaml:"password"`
 			Address            string `json:"address" yaml:"address"`
+			Private            string `json:"private" yaml:"private"`
 			CurrentBlockNumber uint64 `json:"current_block_number" yaml:"current_block_number"`
 			ConfirmNum         uint64 `json:"confirm_num" yaml:"confirm_num"`
 			ConcurrencyNum     uint64 `json:"concurrency_num" yaml:"concurrency_num"`

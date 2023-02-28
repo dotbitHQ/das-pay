@@ -9,6 +9,8 @@ import (
 	"das-pay/tables"
 	"encoding/hex"
 	"fmt"
+	"github.com/btcsuite/btcd/wire"
+	"github.com/dotbitHQ/das-lib/bitcoin"
 	"github.com/dotbitHQ/das-lib/common"
 	"github.com/dotbitHQ/das-lib/core"
 	"github.com/dotbitHQ/das-lib/txbuilder"
@@ -54,6 +56,7 @@ func (d *DasTimer) doOrderRefund() error {
 		noncePolygon = nonce
 	}
 	var ckbOrderList []*dao.RefundOrderInfo
+	var dogeOrderList []*dao.RefundOrderInfo
 	for i, v := range list {
 		if v.RefundStatus != tables.TxStatusSending {
 			continue
@@ -129,6 +132,8 @@ func (d *DasTimer) doOrderRefund() error {
 			} else if hash != "" {
 				log.Info("doOrderRefundTrx ok:", v.OrderId, hash)
 			}
+		case tables.TokenIdDoge:
+			dogeOrderList = append(dogeOrderList, &list[i])
 		}
 	}
 	if len(ckbOrderList) > 0 {
@@ -137,6 +142,14 @@ func (d *DasTimer) doOrderRefund() error {
 			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund ckb", notify.GetLarkTextNotifyStr("doOrderRefundCkb", "", err.Error()))
 		} else if hash != "" {
 			log.Info("doOrderRefundCkb ckb ok:", ckbOrderList, hash)
+		}
+	}
+	if len(dogeOrderList) > 0 {
+		if hash, err := d.doOrderRefundDoge(dogeOrderList); err != nil {
+			log.Error("doOrderRefundDoge err:", err.Error(), dogeOrderList)
+			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund doge", notify.GetLarkTextNotifyStr("doOrderRefundDoge", "", err.Error()))
+		} else if hash != "" {
+			log.Info("doOrderRefundDoge ok:", dogeOrderList, hash)
 		}
 	}
 	return nil
@@ -373,4 +386,89 @@ func (d *DasTimer) doOrderRefundCkb(list []*dao.RefundOrderInfo) (string, error)
 		}
 		return hash.Hex(), nil
 	}
+}
+
+func (d *DasTimer) doOrderRefundDoge(list []*dao.RefundOrderInfo) (string, error) {
+	var orderIds []string
+	for _, v := range list {
+		orderIds = append(orderIds, v.OrderId)
+	}
+	// check order
+	orders, err := d.DbDao.GetOrders(orderIds)
+	if err != nil {
+		return "", fmt.Errorf("GetOrders err: %s", err.Error())
+	}
+	var notRefundMap = make(map[string]struct{})
+	for _, v := range orders {
+		if v.Action == common.DasActionApplyRegister && v.RegisterStatus == tables.RegisterStatusRegistered {
+			notRefundMap[v.OrderId] = struct{}{}
+		}
+	}
+	//
+	var hashList []string
+	var addresses []string
+	var values []int64
+	var total int64
+	for _, v := range list {
+		if _, ok := notRefundMap[v.OrderId]; ok {
+			log.Warn("notRefundMap:", v.OrderId)
+			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "doOrderRefundDoge", "notRefundMap: "+v.OrderId)
+			continue
+		}
+		hashList = append(hashList, v.Hash)
+		addresses = append(addresses, v.Address)
+		value := v.PayAmount.IntPart()
+		total += value
+		values = append(values, value)
+	}
+	if len(addresses) == 0 || len(values) == 0 {
+		return "", nil
+	}
+
+	// get utxo
+	uos, err := d.ChainDoge.GetUnspentOutputsDoge(config.Cfg.Chain.Doge.Address, config.Cfg.Chain.Doge.Private, total)
+	if err != nil {
+		return "", fmt.Errorf("GetUnspentOutputsDoge err: %s", err.Error())
+	}
+
+	// build tx
+	tx, err := d.ChainDoge.NewTx(uos, addresses, values)
+	if err != nil {
+		return "", fmt.Errorf("NewTx err: %s", err.Error())
+	}
+
+	// sign
+	var signTx *wire.MsgTx
+	if config.Cfg.Chain.Doge.Private != "" {
+		_, err = d.ChainDoge.LocalSignTx(tx, uos)
+		if err != nil {
+			return "", fmt.Errorf("LocalSignTx err: %s", err.Error())
+		}
+		signTx = tx
+	} else {
+		signTx, err = d.ChainDoge.RemoteSignTx(bitcoin.RemoteSignMethodDogeTx, tx, uos)
+		if err != nil {
+			return "", fmt.Errorf("LocalSignTx err: %s", err.Error())
+		}
+	}
+
+	//
+	if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusSending, tables.TxStatusOk); err != nil {
+		return "", fmt.Errorf("UpdateRefundStatus err: %s", err.Error())
+	}
+	// send tx
+	hash, err := d.ChainDoge.SendTx(signTx)
+	if err != nil {
+		if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusOk, tables.TxStatusSending); err != nil {
+			log.Info("UpdateRefundStatus err: ", err.Error(), hashList)
+			notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund doge", notify.GetLarkTextNotifyStr("UpdateRefundStatus", strings.Join(hashList, ","), err.Error()))
+		}
+		return "", fmt.Errorf("SendTx err: %s", err.Error())
+	}
+	if err := d.DbDao.UpdateRefundHash(hashList, hash); err != nil {
+		log.Info("UpdateRefundHash err:", err.Error(), hashList, hash)
+		notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "order refund doge", notify.GetLarkTextNotifyStr("UpdateRefundHash", strings.Join(hashList, ",")+";"+hash, err.Error()))
+	}
+
+	return hash, nil
 }

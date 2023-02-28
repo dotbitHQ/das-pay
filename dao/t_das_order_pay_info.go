@@ -35,7 +35,7 @@ func (d *DbDao) CreateOrderPays(list []tables.TableDasOrderPayInfo) error {
 
 func (d *DbDao) UpdateRefundStatus(hashList []string, oldStatus, newStatus tables.TxStatus) error {
 	return d.db.Model(tables.TableDasOrderPayInfo{}).
-		Where("hash IN(?) AND refund_status=?", hashList, oldStatus).
+		Where("hash IN(?) AND status=? AND refund_status=?", hashList, tables.OrderTxStatusConfirm, oldStatus).
 		Updates(map[string]interface{}{
 			"refund_status": newStatus,
 		}).Error

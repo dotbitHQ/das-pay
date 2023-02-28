@@ -56,3 +56,12 @@ func (d *DbDao) UpdateHedgeStatus(orderId string, oldStatus, newStatus tables.Tx
 			"hedge_status": newStatus,
 		}).Error
 }
+
+func (d *DbDao) GetOrders(orderIds []string) (list []tables.TableDasOrderInfo, err error) {
+	if len(orderIds) == 0 {
+		return
+	}
+	err = d.db.Select("order_id,action,pay_status,register_status,order_status").
+		Where("order_id IN(?)", orderIds).Find(&list).Error
+	return
+}

@@ -10,6 +10,7 @@ import (
 	"das-pay/dao"
 	"das-pay/parser"
 	"fmt"
+	"github.com/dotbitHQ/das-lib/bitcoin"
 	"github.com/dotbitHQ/das-lib/core"
 	"github.com/dotbitHQ/das-lib/txbuilder"
 	"github.com/robfig/cron/v3"
@@ -24,6 +25,7 @@ type DasTimer struct {
 	ChainPolygon  *chain_evm.ChainEvm
 	ChainTron     *chain_tron.ChainTron
 	ChainCkb      *chain_ckb.ChainCkb
+	ChainDoge     *bitcoin.TxTool
 	SignClient    *chain_sign.RemoteSignClient
 	TxBuilderBase *txbuilder.DasTxBuilderBase
 	DasCore       *core.DasCore

@@ -83,6 +83,7 @@ const (
 	TokenIdBnb         PayTokenId = "bsc_bnb"
 	TokenIdMatic       PayTokenId = "polygon_matic"
 	TokenIdDoge        PayTokenId = "doge_doge"
+	TokenCoupon        PayTokenId = "coupon"
 )
 
 func (p PayTokenId) ToChainString() string {

@@ -16,6 +16,12 @@ func (d *DasTimer) doOrderHedge() error {
 		return fmt.Errorf("GetNeedHedgeOrderList err: %s", err.Error())
 	}
 	for _, v := range list {
+		if v.PayTokenId == tables.TokenCoupon {
+			if err := d.DbDao.UpdateHedgeStatus(v.OrderId, tables.TxStatusSending, tables.TxStatusOk); err != nil {
+				return fmt.Errorf("UpdateHedgeStatus err: %s", err.Error())
+			}
+			continue
+		}
 		// pay amount check
 		payToken := GetTokenInfo(v.PayTokenId)
 		if payToken.Id <= 0 || payToken.Price.Cmp(decimal.Zero) != 1 {

@@ -238,6 +238,7 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 				log.Warn("parsingBlockData:2", v, orderInfo.Id, orderInfo.Address, addrPayload, payAmount.String(), decValue.String())
 				continue
 			}
+			payInfo.Status = tables.OrderTxStatusConfirm
 			if err := p.DbDao.UpdatePayStatus(&payInfo); err != nil {
 				return fmt.Errorf("UpdatePayStatus err: %s", err.Error())
 			}

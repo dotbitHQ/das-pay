@@ -42,6 +42,8 @@ func (p ParserType) ToChainType() common.ChainType {
 		return common.ChainTypeEth
 	case ParserTypeTRON:
 		return common.ChainTypeTron
+	case ParserTypeDoge:
+		return common.ChainTypeDogeCoin
 	}
 	return common.ChainTypeEth
 }
@@ -58,6 +60,8 @@ func (p ParserType) ToString() string {
 		return "POLYGON"
 	case ParserTypeTRON:
 		return "TRON"
+	case ParserTypeDoge:
+		return "DOGE"
 	}
 	return ""
 }

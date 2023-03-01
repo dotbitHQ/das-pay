@@ -214,33 +214,27 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 			if len(data.Vin) == 0 {
 				return fmt.Errorf("tx vin is nil")
 			}
-			addrVin, err := bitcoin.VinScriptSigToAddress(data.Vin[0].ScriptSig, bitcoin.GetDogeMainNetParams())
+			_, addrPayload, err := bitcoin.VinScriptSigToAddress(data.Vin[0].ScriptSig, bitcoin.GetDogeMainNetParams())
 			if err != nil {
 				return fmt.Errorf("VinScriptSigToAddress err: %s", err.Error())
 			}
 			payInfo, err := p.DbDao.GetPayInfoByHash(v)
 			if err != nil {
 				return fmt.Errorf("GetPayInfoByHash err: %s", err.Error())
-			} else if payInfo.Id == 0 {
+			}
+			if payInfo.Id == 0 || payInfo.Address != addrPayload {
 				// todo notify
-				continue
-			} else if payInfo.Address != addrVin {
-				// todo notify
+				log.Warn("parsingBlockData:1", v, payInfo.Id, payInfo.Address, addrPayload)
 				continue
 			}
 			orderInfo, err := p.DbDao.GetOrderByOrderId(payInfo.OrderId)
 			if err != nil {
 				return fmt.Errorf("GetOrderByOrderId err: %s", err.Error())
-			} else if orderInfo.Id == 0 {
-				// todo notify
-				continue
-			} else if orderInfo.Address != addrVin {
-				// todo notify
-				continue
 			}
 			decValue := decimal.NewFromFloat(value)
-			if orderInfo.PayAmount.Cmp(decValue) != 0 {
+			if orderInfo.Id == 0 || orderInfo.Address != addrPayload || orderInfo.PayAmount.Cmp(decValue) != 0 {
 				// todo notify
+				log.Warn("parsingBlockData:2", v, orderInfo.Id, orderInfo.Address, addrPayload, orderInfo.PayAmount.String(), decValue.String())
 				continue
 			}
 			if err := p.DbDao.UpdatePayStatus(&payInfo); err != nil {

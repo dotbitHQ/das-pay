@@ -32,11 +32,20 @@ func (d *DbDao) UpdatePayStatus(payInfo *tables.TableDasOrderPayInfo) error {
 			return err
 		}
 
-		if err := tx.Clauses(clause.OnConflict{
-			DoUpdates: clause.AssignmentColumns([]string{
-				"chain_type", "address", "status", "account_id",
-			}),
+		if err := tx.Clauses(clause.Insert{
+			Modifier: "IGNORE",
 		}).Create(&payInfo).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(tables.TableDasOrderPayInfo{}).
+			Where("`hash`=? AND order_id=?", payInfo.Hash, payInfo.OrderId).
+			Updates(map[string]interface{}{
+				"chain_type": payInfo.ChainType,
+				"address":    payInfo.Address,
+				"status":     payInfo.Status,
+				"account_id": payInfo.AccountId,
+			}).Error; err != nil {
 			return err
 		}
 		return nil

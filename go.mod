@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/btcsuite/btcd v0.23.0
-	github.com/dotbitHQ/das-lib v1.0.1-0.20230228023001-6a03b9673a3f
+	github.com/dotbitHQ/das-lib v1.0.1-0.20230301092854-08906e1a657a
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fbsobreira/gotron-sdk v0.0.0-20211102183839-58a64f4da5f4
 	github.com/fsnotify/fsnotify v1.5.4

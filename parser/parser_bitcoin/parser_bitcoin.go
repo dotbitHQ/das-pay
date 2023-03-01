@@ -86,6 +86,7 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 
 	for i := uint64(0); i < p.ConcurrencyNum; i++ {
 		bn := p.CurrentBlockNumber + i
+		index := i
 		blockGroup.Go(func() error {
 			blockHash, err := p.NodeRpc.GetBlockHash(bn)
 			if err != nil {
@@ -101,7 +102,7 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 			parentHash := block.PreviousBlockHash
 
 			blockLock.Lock()
-			blockList[i] = tables.TableBlockParserInfo{
+			blockList[index] = tables.TableBlockParserInfo{
 				ParserType:  p.ParserType,
 				BlockNumber: bn,
 				BlockHash:   hash,

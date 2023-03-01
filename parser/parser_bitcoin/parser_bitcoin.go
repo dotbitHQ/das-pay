@@ -36,6 +36,7 @@ func (p *ParserBitcoin) initCurrentBlockNumber() error {
 }
 
 func (p *ParserBitcoin) Parser() {
+	log.Info("ParserBitcoin:")
 	if err := p.initCurrentBlockNumber(); err != nil {
 		log.Error("initCurrentBlockNumber err: ", err.Error())
 		return

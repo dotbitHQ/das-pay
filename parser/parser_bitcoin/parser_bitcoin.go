@@ -232,9 +232,10 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 				return fmt.Errorf("GetOrderByOrderId err: %s", err.Error())
 			}
 			decValue := decimal.NewFromFloat(value)
-			if orderInfo.Id == 0 || orderInfo.Address != addrPayload || orderInfo.PayAmount.Cmp(decValue) != 0 {
+			payAmount := orderInfo.PayAmount.DivRound(decimal.NewFromInt(1e8), 8)
+			if orderInfo.Id == 0 || orderInfo.Address != addrPayload || payAmount.Cmp(decValue) != 0 {
 				// todo notify
-				log.Warn("parsingBlockData:2", v, orderInfo.Id, orderInfo.Address, addrPayload, orderInfo.PayAmount.String(), decValue.String())
+				log.Warn("parsingBlockData:2", v, orderInfo.Id, orderInfo.Address, addrPayload, payAmount.String(), decValue.String())
 				continue
 			}
 			if err := p.DbDao.UpdatePayStatus(&payInfo); err != nil {

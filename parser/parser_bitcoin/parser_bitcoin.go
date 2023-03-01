@@ -182,6 +182,7 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 	if block == nil {
 		return fmt.Errorf("block is nil")
 	}
+	log.Info("parsingBlockData:", p.ParserType.ToString(), block.Hash, len(block.Tx))
 	for _, v := range block.Tx {
 		// get tx info
 		data, err := p.NodeRpc.GetRawTransaction(v)
@@ -204,6 +205,7 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 		}
 		// check inputs & pay info & order id
 		if isMyTx {
+			log.Info("parsingBlockData:", p.ParserType.ToString(), v)
 			if len(data.Vin) == 0 {
 				return fmt.Errorf("tx vin is nil")
 			}

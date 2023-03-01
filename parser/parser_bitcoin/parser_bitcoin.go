@@ -83,6 +83,7 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 
 	blockLock := &sync.Mutex{}
 	blockGroup := &errgroup.Group{}
+	blockChCount := uint64(0)
 
 	for i := uint64(0); i < p.ConcurrencyNum; i++ {
 		bn := p.CurrentBlockNumber + i
@@ -110,6 +111,9 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 			}
 			blockLock.Unlock()
 			blockCh <- block
+			if atomic.AddUint64(&blockChCount, 1) == p.ConcurrencyNum {
+				close(blockCh)
+			}
 			return nil
 		})
 	}
@@ -183,7 +187,7 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 	if block == nil {
 		return fmt.Errorf("block is nil")
 	}
-	log.Info("parsingBlockData:", p.ParserType.ToString(), block.Hash, len(block.Tx))
+	log.Info("parsingBlockData:", p.ParserType.ToString(), block.Height, block.Hash, len(block.Tx))
 	for _, v := range block.Tx {
 		// get tx info
 		data, err := p.NodeRpc.GetRawTransaction(v)

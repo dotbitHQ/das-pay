@@ -4,10 +4,11 @@ go 1.16
 
 require (
 	github.com/btcsuite/btcd v0.23.0
-	github.com/dotbitHQ/das-lib v1.0.1-0.20230301112347-4fa74516b3b3
+	github.com/dotbitHQ/das-lib v1.0.1-0.20230303114317-752f64b31a09
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/fbsobreira/gotron-sdk v0.0.0-20211102183839-58a64f4da5f4
 	github.com/fsnotify/fsnotify v1.5.4
+	github.com/gogf/gf/v2 v2.3.2 // indirect
 	github.com/golang/protobuf v1.5.2
 	github.com/nervosnetwork/ckb-sdk-go v0.101.3
 	github.com/parnurzeal/gorequest v0.2.16

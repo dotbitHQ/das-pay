@@ -426,7 +426,7 @@ func (d *DasTimer) doOrderRefundDoge(list []*dao.RefundOrderInfo) (string, error
 	}
 
 	// get utxo
-	uos, err := d.ChainDoge.GetUnspentOutputsDoge(config.Cfg.Chain.Doge.Address, config.Cfg.Chain.Doge.Private, total)
+	_, uos, err := d.ChainDoge.GetUnspentOutputsDoge(config.Cfg.Chain.Doge.Address, config.Cfg.Chain.Doge.Private, total)
 	if err != nil {
 		return "", fmt.Errorf("GetUnspentOutputsDoge err: %s", err.Error())
 	}

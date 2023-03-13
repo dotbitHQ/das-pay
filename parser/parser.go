@@ -190,6 +190,7 @@ func (k *KitParser) initParserDoge() {
 		Proxy:    "",
 	}
 	k.ParserDoge = &parser_bitcoin.ParserBitcoin{
+		PayTokenId: tables.TokenIdDoge,
 		ParserCommon: parser_common.ParserCommon{
 			Ctx:                k.Ctx,
 			Wg:                 k.Wg,

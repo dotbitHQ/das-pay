@@ -314,6 +314,7 @@ func (p *ParserBitcoin) checkHashAndAmount(data btcjson.TxRawResult, decValue de
 		}
 	}
 	if orderInfo.Id == 0 {
+		decValue = decValue.Mul(decimal.NewFromInt(1e8))
 		orderInfo, err = p.DbDao.GetOrderByAddrWithPayAmount(p.ParserType.ToChainType(), addrPayload, decValue)
 		if err != nil {
 			return fmt.Errorf("GetOrderByOrderId err: %s", err.Error())

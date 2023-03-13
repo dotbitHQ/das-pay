@@ -1,10 +1,15 @@
 package parser_bitcoin
 
 import (
+	"das-pay/config"
+	"das-pay/notify"
 	"das-pay/parser/parser_common"
 	"das-pay/tables"
 	"fmt"
+	"github.com/btcsuite/btcd/btcjson"
+	"github.com/btcsuite/btcd/txscript"
 	"github.com/dotbitHQ/das-lib/bitcoin"
+	"github.com/dotbitHQ/das-lib/common"
 	"github.com/scorpiotzh/mylog"
 	"github.com/shopspring/decimal"
 	"golang.org/x/sync/errgroup"
@@ -16,6 +21,7 @@ import (
 var log = mylog.NewLogger("parser_bitcoin", mylog.LevelDebug)
 
 type ParserBitcoin struct {
+	PayTokenId tables.PayTokenId
 	parser_common.ParserCommon
 	NodeRpc *bitcoin.BaseRequest
 }
@@ -208,6 +214,7 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 				break
 			}
 		}
+		decValue := decimal.NewFromFloat(value)
 		// check inputs & pay info & order id
 		if isMyTx {
 			log.Info("parsingBlockData:", p.ParserType.ToString(), v)
@@ -218,32 +225,130 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 			if err != nil {
 				return fmt.Errorf("VinScriptSigToAddress err: %s", err.Error())
 			}
-			payInfo, err := p.DbDao.GetPayInfoByHash(v)
-			if err != nil {
-				return fmt.Errorf("GetPayInfoByHash err: %s", err.Error())
-			}
-			if payInfo.Id == 0 || payInfo.Address != addrPayload {
-				// todo notify
-				log.Warn("parsingBlockData:1", v, payInfo.Id, payInfo.Address, addrPayload)
+
+			if ok, err := p.checkOpReturn(data, decValue, addrPayload); err != nil {
+				return fmt.Errorf("checkOpReturn err: %s", err.Error())
+			} else if ok {
 				continue
 			}
-			orderInfo, err := p.DbDao.GetOrderByOrderId(payInfo.OrderId)
-			if err != nil {
-				return fmt.Errorf("GetOrderByOrderId err: %s", err.Error())
+			if err = p.checkHashAndAmount(data, decValue, addrPayload); err != nil {
+				return fmt.Errorf("checkHashAndAmount err: %s", err.Error())
 			}
-			decValue := decimal.NewFromFloat(value)
-			payAmount := orderInfo.PayAmount.DivRound(decimal.NewFromInt(1e8), 8)
-			if orderInfo.Id == 0 || orderInfo.Address != addrPayload || payAmount.Cmp(decValue) != 0 {
-				// todo notify
-				log.Warn("parsingBlockData:2", v, orderInfo.Id, orderInfo.Address, addrPayload, payAmount.String(), decValue.String())
+		}
+	}
+	return nil
+}
+
+func (p *ParserBitcoin) checkOpReturn(data btcjson.TxRawResult, decValue decimal.Decimal, addrPayload string) (bool, error) {
+	var orderId string
+	for _, vOut := range data.Vout {
+		switch vOut.ScriptPubKey.Type {
+		case txscript.NullDataTy.String():
+			bys := common.Hex2Bytes(vOut.ScriptPubKey.Hex)
+			if len(bys) <= 2 {
 				continue
 			}
-			payInfo.Status = tables.OrderTxStatusConfirm
-			if err := p.DbDao.UpdatePayStatus(&payInfo); err != nil {
-				return fmt.Errorf("UpdatePayStatus err: %s", err.Error())
-			}
+			orderId = string(bys[2:])
 			break
 		}
+	}
+	log.Info("checkOpReturn:", orderId, addrPayload)
+	if orderId == "" {
+		return false, nil
+	}
+	order, err := p.DbDao.GetOrderByOrderId(orderId)
+	if err != nil {
+		return false, fmt.Errorf("GetOrderByOrderId err: %s", err.Error())
+	} else if order.Id == 0 {
+		log.Warn("GetOrderByOrderId is not exist:", p.ParserType.ToString(), orderId)
+		return false, nil
+	}
+	if order.PayTokenId != p.PayTokenId {
+		log.Warn("order token id not match", order.OrderId)
+		return false, nil
+	}
+	payAmount := order.PayAmount.DivRound(decimal.NewFromInt(1e8), 8)
+	if payAmount.Cmp(decValue) != 0 {
+		log.Warn("tx value not match order amount:", decValue.String(), payAmount.String())
+		return false, nil
+	}
+	// change the status to confirm
+	payInfo := tables.TableDasOrderPayInfo{
+		Id:           0,
+		Hash:         data.Txid,
+		OrderId:      order.OrderId,
+		ChainType:    p.ParserType.ToChainType(),
+		Address:      addrPayload,
+		Status:       tables.OrderTxStatusConfirm,
+		AccountId:    order.AccountId,
+		RefundStatus: tables.TxStatusDefault,
+		RefundHash:   "",
+		Timestamp:    time.Now().UnixNano() / 1e6,
+	}
+	if err := p.DbDao.UpdatePayStatus(&payInfo); err != nil {
+		return false, fmt.Errorf("UpdatePayStatus err: %s", err.Error())
+	}
+
+	return true, nil
+}
+
+func (p *ParserBitcoin) checkHashAndAmount(data btcjson.TxRawResult, decValue decimal.Decimal, addrPayload string) error {
+	payInfo, err := p.DbDao.GetPayInfoByHash(data.Txid)
+	if err != nil {
+		return fmt.Errorf("GetPayInfoByHash err: %s", err.Error())
+	}
+	returnHash, addressMatch, valueMatch := false, false, false
+	var orderInfo tables.TableDasOrderInfo
+	if payInfo.Id > 0 {
+		returnHash = true
+		orderInfo, err = p.DbDao.GetOrderByOrderId(payInfo.OrderId)
+		if err != nil {
+			return fmt.Errorf("GetOrderByOrderId err: %s", err.Error())
+		}
+		if payInfo.Address == addrPayload && orderInfo.Address == addrPayload {
+			addressMatch = true
+		}
+		payAmount := orderInfo.PayAmount.DivRound(decimal.NewFromInt(1e8), 8)
+		if payAmount.Cmp(decValue) == 0 {
+			valueMatch = true
+		}
+	}
+	if orderInfo.Id == 0 {
+		orderInfo, err = p.DbDao.GetOrderByAddrWithPayAmount(p.ParserType.ToChainType(), addrPayload, decValue)
+		if err != nil {
+			return fmt.Errorf("GetOrderByOrderId err: %s", err.Error())
+		}
+		if orderInfo.Id > 0 {
+			addressMatch = true
+			valueMatch = true
+		}
+		payInfo = tables.TableDasOrderPayInfo{
+			Id:           0,
+			Hash:         data.Txid,
+			OrderId:      orderInfo.OrderId,
+			ChainType:    p.ParserType.ToChainType(),
+			Address:      addrPayload,
+			Status:       tables.OrderTxStatusConfirm,
+			AccountId:    orderInfo.AccountId,
+			RefundStatus: tables.TxStatusDefault,
+			RefundHash:   "",
+			Timestamp:    time.Now().UnixNano() / 1e6,
+		}
+	}
+	if orderInfo.Id > 0 && orderInfo.PayTokenId != p.PayTokenId {
+		log.Warn("order token id not match", orderInfo.OrderId)
+		return nil
+	}
+	log.Info("checkHashAndAmount:", orderInfo.OrderId, data.Txid, returnHash, addressMatch, valueMatch)
+	if addressMatch && valueMatch {
+		payInfo.Status = tables.OrderTxStatusConfirm
+		if err := p.DbDao.UpdatePayStatus(&payInfo); err != nil {
+			return fmt.Errorf("UpdatePayStatus err: %s", err.Error())
+		}
+	} else {
+		msg := `hash: %s
+addrPayload: %s`
+		notify.SendLarkTextNotify(config.Cfg.Notify.LarkErrorKey, "checkHashAndAmount", fmt.Sprintf(msg, data.Txid, addrPayload))
 	}
 	return nil
 }

@@ -432,7 +432,7 @@ func (d *DasTimer) doOrderRefundDoge(list []*dao.RefundOrderInfo) (string, error
 	}
 
 	// build tx
-	tx, err := d.ChainDoge.NewTx(uos, addresses, values)
+	tx, err := d.ChainDoge.NewTx(uos, addresses, values, "")
 	if err != nil {
 		return "", fmt.Errorf("NewTx err: %s", err.Error())
 	}

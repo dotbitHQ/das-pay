@@ -2,12 +2,22 @@ package dao
 
 import (
 	"das-pay/tables"
+	"github.com/dotbitHQ/das-lib/common"
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 func (d *DbDao) GetOrderByOrderId(orderId string) (order tables.TableDasOrderInfo, err error) {
-	err = d.db.Where("order_id=? AND order_type=?", orderId, tables.OrderTypeSelf).Find(&order).Error
+	err = d.db.Where("order_id=? AND order_type=?",
+		orderId, tables.OrderTypeSelf).Find(&order).Error
+	return
+}
+
+func (d *DbDao) GetOrderByAddrWithPayAmount(chainType common.ChainType, addr string, payAmount decimal.Decimal) (order tables.TableDasOrderInfo, err error) {
+	err = d.db.Where("chain_type=? AND address=? AND pay_amount=? AND order_type=?",
+		chainType, addr, payAmount, tables.OrderTypeSelf).
+		Order("id DESC").Limit(1).Find(&order).Error
 	return
 }
 

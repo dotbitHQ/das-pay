@@ -29,15 +29,16 @@ func TestDogeTx(t *testing.T) {
 	}
 
 	// get utxo
-	addr := ""
+	addr := "DP86MSmWjEZw8GKotxcvAaW5D4e3qoEh6f"
 	privateKey := ""
-	_, uos, err := txTool.GetUnspentOutputsDoge(addr, privateKey, 185703866)
+	payAmount := int64(102153551)
+	_, uos, err := txTool.GetUnspentOutputsDoge(addr, privateKey, payAmount)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// transfer
-	tx, err := txTool.NewTx(uos, []string{addr}, []int64{185703866})
+	tx, err := txTool.NewTx(uos, []string{addr}, []int64{payAmount}, "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +56,10 @@ func TestDogeTx(t *testing.T) {
 }
 
 func TestValue(t *testing.T) {
-	fmt.Println(decimal.NewFromInt(133333333).DivRound(decimal.NewFromInt(1e8), 8))
-	fmt.Println(decimal.NewFromFloat(float64(1.33333333) * 1e8).String())
-	fmt.Println(decimal.NewFromFloat(float64(1.33333333) * 1e8).Cmp(decimal.NewFromInt(133333333)))
+	//fmt.Println(decimal.NewFromInt(133333333).DivRound(decimal.NewFromInt(1e8), 8))
+	//fmt.Println(decimal.NewFromFloat(float64(1.33333333) * 1e8).String())
+	//fmt.Println(decimal.NewFromFloat(float64(1.33333333) * 1e8).Cmp(decimal.NewFromInt(133333333)))
+	decValue := decimal.NewFromFloat(1.33333333)
+	decValue = decValue.Mul(decimal.NewFromInt(1e8))
+	fmt.Println(decValue.String())
 }

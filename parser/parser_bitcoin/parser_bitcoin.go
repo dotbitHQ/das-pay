@@ -9,7 +9,6 @@ import (
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/dotbitHQ/das-lib/bitcoin"
-	"github.com/dotbitHQ/das-lib/common"
 	"github.com/scorpiotzh/mylog"
 	"github.com/shopspring/decimal"
 	"golang.org/x/sync/errgroup"
@@ -244,12 +243,10 @@ func (p *ParserBitcoin) dealWithOpReturn(data btcjson.TxRawResult, decValue deci
 	for _, vOut := range data.Vout {
 		switch vOut.ScriptPubKey.Type {
 		case txscript.NullDataTy.String():
-			bys := common.Hex2Bytes(vOut.ScriptPubKey.Hex)
-			if len(bys) <= 2 {
-				continue
+			if lenHex := len(vOut.ScriptPubKey.Hex); lenHex > 32 {
+				orderId = vOut.ScriptPubKey.Hex[lenHex-32:]
+				break
 			}
-			orderId = string(bys[2:])
-			break
 		}
 	}
 	log.Info("checkOpReturn:", orderId, addrPayload)

@@ -226,20 +226,20 @@ func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 				return fmt.Errorf("VinScriptSigToAddress err: %s", err.Error())
 			}
 
-			if ok, err := p.checkOpReturn(data, decValue, addrPayload); err != nil {
-				return fmt.Errorf("checkOpReturn err: %s", err.Error())
+			if ok, err := p.dealWithOpReturn(data, decValue, addrPayload); err != nil {
+				return fmt.Errorf("dealWithOpReturn err: %s", err.Error())
 			} else if ok {
 				continue
 			}
-			if err = p.checkHashAndAmount(data, decValue, addrPayload); err != nil {
-				return fmt.Errorf("checkHashAndAmount err: %s", err.Error())
+			if err = p.dealWithHashAndAmount(data, decValue, addrPayload); err != nil {
+				return fmt.Errorf("dealWithHashAndAmount err: %s", err.Error())
 			}
 		}
 	}
 	return nil
 }
 
-func (p *ParserBitcoin) checkOpReturn(data btcjson.TxRawResult, decValue decimal.Decimal, addrPayload string) (bool, error) {
+func (p *ParserBitcoin) dealWithOpReturn(data btcjson.TxRawResult, decValue decimal.Decimal, addrPayload string) (bool, error) {
 	var orderId string
 	for _, vOut := range data.Vout {
 		switch vOut.ScriptPubKey.Type {
@@ -292,7 +292,7 @@ func (p *ParserBitcoin) checkOpReturn(data btcjson.TxRawResult, decValue decimal
 	return true, nil
 }
 
-func (p *ParserBitcoin) checkHashAndAmount(data btcjson.TxRawResult, decValue decimal.Decimal, addrPayload string) error {
+func (p *ParserBitcoin) dealWithHashAndAmount(data btcjson.TxRawResult, decValue decimal.Decimal, addrPayload string) error {
 	payInfo, err := p.DbDao.GetPayInfoByHash(data.Txid)
 	if err != nil {
 		return fmt.Errorf("GetPayInfoByHash err: %s", err.Error())

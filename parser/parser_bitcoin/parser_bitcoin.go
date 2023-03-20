@@ -84,11 +84,11 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 	log.Info("parserConcurrencyMode:", p.ParserType.ToString(), p.CurrentBlockNumber, p.ConcurrencyNum)
 
 	var blockList = make([]tables.TableBlockParserInfo, p.ConcurrencyNum)
+	var blocks = make([]bitcoin.BlockInfo, p.ConcurrencyNum)
 	var blockCh = make(chan bitcoin.BlockInfo, p.ConcurrencyNum)
 
 	blockLock := &sync.Mutex{}
 	blockGroup := &errgroup.Group{}
-	blockChCount := uint64(0)
 
 	for i := uint64(0); i < p.ConcurrencyNum; i++ {
 		bn := p.CurrentBlockNumber + i
@@ -114,14 +114,20 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 				BlockHash:   hash,
 				ParentHash:  parentHash,
 			}
+			blocks[index] = block
 			blockLock.Unlock()
-			blockCh <- block
-			if atomic.AddUint64(&blockChCount, 1) == p.ConcurrencyNum {
-				close(blockCh)
-			}
+
 			return nil
 		})
 	}
+	if err := blockGroup.Wait(); err != nil {
+		return fmt.Errorf("errGroup.Wait()1 err: %s", err.Error())
+	}
+
+	for i := range blocks {
+		blockCh <- blocks[i]
+	}
+	close(blockCh)
 
 	blockGroup.Go(func() error {
 		for v := range blockCh {
@@ -133,7 +139,7 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 	})
 
 	if err := blockGroup.Wait(); err != nil {
-		return fmt.Errorf("errGroup.Wait() err: %s", err.Error())
+		return fmt.Errorf("errGroup.Wait()2 err: %s", err.Error())
 	}
 
 	// block

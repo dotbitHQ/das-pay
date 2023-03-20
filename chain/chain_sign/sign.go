@@ -43,6 +43,10 @@ const (
 	SignMethodCkb  string = "wallet_cKBSignMsg"
 )
 
+func (r *RemoteSignClient) Client() rpc.Client {
+	return r.client
+}
+
 func (r *RemoteSignClient) SignCkbMessage(ckbSignerAddress, message string) ([]byte, error) {
 	if common.Has0xPrefix(message) {
 		message = message[2:]

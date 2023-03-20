@@ -416,7 +416,11 @@ func (d *DasTimer) doOrderRefundDoge(list []*dao.RefundOrderInfo) (string, error
 			continue
 		}
 		hashList = append(hashList, v.Hash)
-		addresses = append(addresses, v.Address)
+		addr, err := common.Base58CheckEncode(v.Address, common.DogeCoinBase58Version)
+		if err != nil {
+			return "", fmt.Errorf("Base58CheckEncode err: %s", err.Error())
+		}
+		addresses = append(addresses, addr)
 		value := v.PayAmount.IntPart()
 		total += value
 		values = append(values, value)
@@ -445,11 +449,13 @@ func (d *DasTimer) doOrderRefundDoge(list []*dao.RefundOrderInfo) (string, error
 			return "", fmt.Errorf("LocalSignTx err: %s", err.Error())
 		}
 		signTx = tx
-	} else {
+	} else if d.ChainDoge.RemoteSignClient != nil {
 		signTx, err = d.ChainDoge.RemoteSignTx(bitcoin.RemoteSignMethodDogeTx, tx, uos)
 		if err != nil {
 			return "", fmt.Errorf("LocalSignTx err: %s", err.Error())
 		}
+	} else {
+		return "", fmt.Errorf("no signature configured")
 	}
 
 	//

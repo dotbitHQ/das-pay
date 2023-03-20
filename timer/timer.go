@@ -55,6 +55,15 @@ func (d *DasTimer) InitChain(kp *parser.KitParser) {
 	if kp.ParserBsc != nil {
 		d.ChainBsc = kp.ParserBsc.ChainEvm
 	}
+	if kp.ParserDoge != nil {
+		d.ChainDoge = &bitcoin.TxTool{
+			RpcClient:        kp.ParserDoge.NodeRpc,
+			Ctx:              d.Ctx,
+			RemoteSignClient: d.SignClient.Client(),
+			DustLimit:        bitcoin.DustLimitDoge,
+			Params:           bitcoin.GetDogeMainNetParams(),
+		}
+	}
 }
 
 func (d *DasTimer) Run() error {

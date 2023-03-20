@@ -94,7 +94,6 @@ func runServer(ctx *cli.Context) error {
 		Ctx:           ctxServer,
 		Wg:            &wgServer,
 	}
-	dt.InitChain(kp)
 	if config.Cfg.Server.RemoteSignApiUrl != "" {
 		signClient, err := chain_sign.NewRemoteSignClient(ctxServer, config.Cfg.Server.RemoteSignApiUrl)
 		if err != nil {
@@ -102,6 +101,8 @@ func runServer(ctx *cli.Context) error {
 		}
 		dt.SignClient = signClient
 	}
+	dt.InitChain(kp)
+
 	if err := dt.DoOrderRefund(); err != nil {
 		return fmt.Errorf("dt.DoOrderRefund() err: %s", err.Error())
 	}

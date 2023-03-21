@@ -31,6 +31,7 @@ const (
 	ParserTypeTRON    = 3
 	ParserTypeBSC     = 5
 	ParserTypePOLYGON = 6
+	ParserTypeDoge    = 7
 )
 
 func (p ParserType) ToChainType() common.ChainType {
@@ -41,6 +42,8 @@ func (p ParserType) ToChainType() common.ChainType {
 		return common.ChainTypeEth
 	case ParserTypeTRON:
 		return common.ChainTypeTron
+	case ParserTypeDoge:
+		return common.ChainTypeDogeCoin
 	}
 	return common.ChainTypeEth
 }
@@ -57,6 +60,8 @@ func (p ParserType) ToString() string {
 		return "POLYGON"
 	case ParserTypeTRON:
 		return "TRON"
+	case ParserTypeDoge:
+		return "DOGE"
 	}
 	return ""
 }

@@ -17,6 +17,7 @@ func (d *DasTimer) doOrderHedge() error {
 	}
 	for _, v := range list {
 		if v.PayTokenId == tables.TokenCoupon {
+			// update order
 			if err := d.DbDao.UpdateHedgeStatus(v.OrderId, tables.TxStatusSending, tables.TxStatusOk); err != nil {
 				return fmt.Errorf("UpdateHedgeStatus err: %s", err.Error())
 			}

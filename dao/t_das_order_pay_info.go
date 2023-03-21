@@ -35,7 +35,7 @@ func (d *DbDao) CreateOrderPays(list []tables.TableDasOrderPayInfo) error {
 
 func (d *DbDao) UpdateRefundStatus(hashList []string, oldStatus, newStatus tables.TxStatus) error {
 	return d.db.Model(tables.TableDasOrderPayInfo{}).
-		Where("hash IN(?) AND refund_status=?", hashList, oldStatus).
+		Where("hash IN(?) AND status=? AND refund_status=?", hashList, tables.OrderTxStatusConfirm, oldStatus).
 		Updates(map[string]interface{}{
 			"refund_status": newStatus,
 		}).Error
@@ -57,5 +57,10 @@ func (d *DbDao) GetMaybeRejectedPayInfoList() (count int64, err error) {
 func (d *DbDao) GetUnRefundTxCount() (count int64, err error) {
 	err = d.db.Model(tables.TableDasOrderPayInfo{}).
 		Where("`status`=? AND refund_status=?", tables.OrderTxStatusConfirm, tables.TxStatusSending).Count(&count).Error
+	return
+}
+
+func (d *DbDao) GetPayInfoByHash(hash string) (info tables.TableDasOrderPayInfo, err error) {
+	err = d.db.Where("hash=?", hash).Find(&info).Error
 	return
 }

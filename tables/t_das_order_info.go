@@ -82,6 +82,7 @@ const (
 	TokenIdWx          PayTokenId = "wx_cny"
 	TokenIdBnb         PayTokenId = "bsc_bnb"
 	TokenIdMatic       PayTokenId = "polygon_matic"
+	TokenIdDoge        PayTokenId = "doge_doge"
 	TokenCoupon        PayTokenId = "coupon"
 )
 

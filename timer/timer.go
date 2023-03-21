@@ -10,6 +10,7 @@ import (
 	"das-pay/dao"
 	"das-pay/parser"
 	"fmt"
+	"github.com/dotbitHQ/das-lib/bitcoin"
 	"github.com/dotbitHQ/das-lib/core"
 	"github.com/dotbitHQ/das-lib/txbuilder"
 	"github.com/robfig/cron/v3"
@@ -24,6 +25,7 @@ type DasTimer struct {
 	ChainPolygon  *chain_evm.ChainEvm
 	ChainTron     *chain_tron.ChainTron
 	ChainCkb      *chain_ckb.ChainCkb
+	ChainDoge     *bitcoin.TxTool
 	SignClient    *chain_sign.RemoteSignClient
 	TxBuilderBase *txbuilder.DasTxBuilderBase
 	DasCore       *core.DasCore
@@ -52,6 +54,18 @@ func (d *DasTimer) InitChain(kp *parser.KitParser) {
 	}
 	if kp.ParserBsc != nil {
 		d.ChainBsc = kp.ParserBsc.ChainEvm
+	}
+	if kp.ParserDoge != nil {
+		d.ChainDoge = &bitcoin.TxTool{
+			RpcClient:        kp.ParserDoge.NodeRpc,
+			Ctx:              d.Ctx,
+			RemoteSignClient: nil,
+			DustLimit:        bitcoin.DustLimitDoge,
+			Params:           bitcoin.GetDogeMainNetParams(),
+		}
+		if d.SignClient != nil {
+			d.ChainDoge.RemoteSignClient = d.SignClient.Client()
+		}
 	}
 }
 

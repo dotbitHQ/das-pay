@@ -50,7 +50,7 @@ docker-compose up -d
 
 _if you already have a mysql installed, just run_
 ```bash
-docker run -dv $PWD/config/config.yaml:/app/config/config.yaml --name das-pay-server slagga/das-pay
+docker run -dv $PWD/config/config.yaml:/app/config/config.yaml --name das-pay-server dotbitteam/das-pay:latest
 ```
 
 

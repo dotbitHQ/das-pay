@@ -194,6 +194,79 @@ func (p *ParserBitcoin) parserSubMode() error {
 	return nil
 }
 
+func (p *ParserBitcoin) parsingBlockData2(block *bitcoin.BlockInfo) error {
+	if block == nil {
+		return fmt.Errorf("block is nil")
+	}
+	log.Info("parsingBlockData:", p.ParserType.ToString(), block.Height, block.Hash, len(block.Tx))
+
+	var indexCh = make(chan int, len(block.Tx))
+	var dataList = make([]btcjson.TxRawResult, len(block.Tx))
+	dataLock := &sync.Mutex{}
+	dataGroup := &errgroup.Group{}
+	for i := 0; i < 5; i++ {
+		dataGroup.Go(func() error {
+			for index := range indexCh {
+				data, err := p.NodeRpc.GetRawTransaction(block.Tx[index])
+				if err != nil {
+					return fmt.Errorf("req GetRawTransaction err: %s", err.Error())
+				}
+				dataLock.Lock()
+				dataList[index] = data
+				dataLock.Unlock()
+			}
+			return nil
+		})
+	}
+	for i, _ := range block.Tx {
+		indexCh <- i
+	}
+	close(indexCh)
+	if err := dataGroup.Wait(); err != nil {
+		return fmt.Errorf("dataGroup.Wait() err: %s", err.Error())
+	}
+	log.Info("parsingBlockData:", p.ParserType.ToString(), block.Height, block.Hash, len(block.Tx), len(dataList))
+
+	for _, data := range dataList {
+		// check address of outputs
+		isMyTx, value := false, float64(0)
+		for _, vOut := range data.Vout {
+			for _, addr := range vOut.ScriptPubKey.Addresses {
+				if addr == p.Address {
+					isMyTx = true
+					value = vOut.Value
+					break
+				}
+			}
+			if isMyTx {
+				break
+			}
+		}
+		decValue := decimal.NewFromFloat(value)
+		// check inputs & pay info & order id
+		if isMyTx {
+			log.Info("parsingBlockData:", p.ParserType.ToString(), data.Txid)
+			if len(data.Vin) == 0 {
+				return fmt.Errorf("tx vin is nil")
+			}
+			_, addrPayload, err := bitcoin.VinScriptSigToAddress(data.Vin[0].ScriptSig, bitcoin.GetDogeMainNetParams())
+			if err != nil {
+				return fmt.Errorf("VinScriptSigToAddress err: %s", err.Error())
+			}
+
+			if ok, err := p.dealWithOpReturn(data, decValue, addrPayload); err != nil {
+				return fmt.Errorf("dealWithOpReturn err: %s", err.Error())
+			} else if ok {
+				continue
+			}
+			if err = p.dealWithHashAndAmount(data, decValue, addrPayload); err != nil {
+				return fmt.Errorf("dealWithHashAndAmount err: %s", err.Error())
+			}
+		}
+	}
+	return nil
+}
+
 func (p *ParserBitcoin) parsingBlockData(block *bitcoin.BlockInfo) error {
 	if block == nil {
 		return fmt.Errorf("block is nil")

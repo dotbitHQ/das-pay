@@ -131,8 +131,8 @@ func (p *ParserBitcoin) parserConcurrencyMode() error {
 
 	blockGroup.Go(func() error {
 		for v := range blockCh {
-			if err := p.parsingBlockData(&v); err != nil {
-				return fmt.Errorf("parsingBlockData err: %s", err.Error())
+			if err := p.parsingBlockData2(&v); err != nil {
+				return fmt.Errorf("parsingBlockData2 err: %s", err.Error())
 			}
 		}
 		return nil
@@ -173,8 +173,8 @@ func (p *ParserBitcoin) parserSubMode() error {
 	} else if fork {
 		log.Warn("CheckFork is true:", p.ParserType.ToString(), p.CurrentBlockNumber, blockHash, parentHash)
 		atomic.AddUint64(&p.CurrentBlockNumber, ^uint64(0))
-	} else if err := p.parsingBlockData(&block); err != nil {
-		return fmt.Errorf("parsingBlockData err: %s", err.Error())
+	} else if err := p.parsingBlockData2(&block); err != nil {
+		return fmt.Errorf("parsingBlockData2 err: %s", err.Error())
 	} else {
 		blockInfo := tables.TableBlockParserInfo{
 			ParserType:  p.ParserType,

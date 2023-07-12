@@ -61,6 +61,13 @@ func (d *DasTimer) doOrderRefund() error {
 		if v.RefundStatus != tables.TxStatusSending {
 			continue
 		}
+		if v.IsUniPay == tables.IsUniPayTrue {
+			hashList := []string{v.Hash}
+			if err := d.DbDao.UpdateRefundStatus(hashList, tables.TxStatusSending, tables.TxStatusDefault); err != nil {
+				return fmt.Errorf("UpdateRefundStatus IsUniPayTrue err: %s", err.Error())
+			}
+			continue
+		}
 		switch v.PayTokenId {
 		case tables.TokenIdCkb, tables.TokenIdDas:
 			ckbOrderList = append(ckbOrderList, &list[i])

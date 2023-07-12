@@ -28,12 +28,20 @@ type TableDasOrderInfo struct {
 	PreRegisterStatus TxStatus         `json:"pre_register_status" gorm:"column:pre_register_status"`
 	RegisterStatus    RegisterStatus   `json:"register_status" gorm:"column:register_status"`
 	OrderStatus       OrderStatus      `json:"order_status" gorm:"column:order_status"` // 1-closed
+	IsUniPay          IsUniPay         `json:"is_uni_pay" gorm:"column:is_uni_pay;"`
 	//CreatedAt         time.Time        `json:"created_at" gorm:"column:created_at"`
 	//UpdatedAt         time.Time        `json:"updated_at" gorm:"column:updated_at"`
 }
 
 const (
 	TableNameDasOrderInfo = "t_das_order_info"
+)
+
+type IsUniPay int
+
+const (
+	IsUniPayFalse IsUniPay = 0
+	IsUniPayTrue  IsUniPay = 1
 )
 
 func (t *TableDasOrderInfo) TableName() string {

@@ -15,10 +15,11 @@ type RefundOrderInfo struct {
 	PayTokenId   tables.PayTokenId `json:"pay_token_id" gorm:"column:pay_token_id"`
 	PayAmount    decimal.Decimal   `json:"pay_amount" gorm:"column:pay_amount"`
 	RefundStatus tables.TxStatus   `json:"refund_status" gorm:"column:refund_status"`
+	IsUniPay     tables.IsUniPay   `json:"is_uni_pay" gorm:"column:is_uni_pay;"`
 }
 
 func (d *DbDao) GetNeedRefundOrderList() (list []RefundOrderInfo, err error) {
-	sql := `SELECT p.order_id,p.hash,p.chain_type,p.address,o.pay_token_id,o.pay_amount,p.refund_status 
+	sql := `SELECT p.order_id,p.hash,p.chain_type,p.address,o.pay_token_id,o.pay_amount,o.is_uni_pay,p.refund_status 
 FROM t_das_order_pay_info p JOIN t_das_order_info o 
 ON p.refund_status=? AND o.order_type=? AND p.order_id=o.order_id AND p.status=? `
 	err = d.db.Raw(sql, tables.TxStatusSending, tables.OrderTypeSelf, tables.OrderTxStatusConfirm).Find(&list).Error
